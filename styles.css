@@ -1,0 +1,995 @@
+/* Genel Stiller */
+:root {
+    --primary-color: #4361ee;
+    --primary-dark: #3a56d4;
+    --secondary-color: #3f37c9;
+    --success-color: #4cc9f0;
+    --info-color: #4895ef;
+    --warning-color: #f72585;
+    --danger-color: #e63946;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.2);
+    --transition-speed: 0.3s;
+    --border-radius: 8px;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+/* 3D Kart Efektleri */
+.main-card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.main-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-speed);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+    color: white;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+    color: white;
+}
+
+.card-header.bg-info {
+    background: linear-gradient(135deg, var(--info-color) 0%, #3a7bd5 100%) !important;
+    color: white;
+}
+
+.card-header.bg-warning {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+    color: white;
+}
+
+.card-header.bg-danger {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%) !important;
+    color: white;
+}
+
+.card-header.bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: var(--dark-color);
+}
+
+.card-header.bg-secondary {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #2c3e50 100%) !important;
+    color: white;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Buton Stilleri */
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    border: none;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    box-shadow: 0 6px 8px rgba(67, 97, 238, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    box-shadow: 0 4px 6px rgba(46, 204, 113, 0.3);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    box-shadow: 0 6px 8px rgba(46, 204, 113, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--info-color) 0%, #3a7bd5 100%);
+    box-shadow: 0 4px 6px rgba(72, 149, 239, 0.3);
+    color: white;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #3a7bd5 0%, var(--info-color) 100%);
+    box-shadow: 0 6px 8px rgba(72, 149, 239, 0.4);
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    box-shadow: 0 4px 6px rgba(243, 156, 18, 0.3);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+    box-shadow: 0 6px 8px rgba(243, 156, 18, 0.4);
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c0392b 0%, var(--danger-color) 100%);
+    box-shadow: 0 6px 8px rgba(231, 76, 60, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--dark-color);
+}
+
+.btn-light:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #2c3e50 100%);
+    box-shadow: 0 4px 6px rgba(44, 62, 80, 0.3);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #2c3e50 0%, var(--secondary-color) 100%);
+    box-shadow: 0 6px 8px rgba(44, 62, 80, 0.4);
+    transform: translateY(-2px);
+}
+
+.action-buttons .btn {
+    min-width: 140px;
+    margin: 0.5rem !important;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.action-buttons .btn i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+/* Tablo Stiller */
+.table {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    background: white;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    padding: 0.6rem;
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.table tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.criteria-col {
+    width: 70px;
+    max-width: 70px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.criteria-input, .total-input {
+    width: 55px;
+    text-align: center;
+    padding: 3px;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.criteria-input:focus, .total-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    outline: none;
+}
+
+/* Input spinner butonlarını kaldır */
+input[type="number"]::-webkit-inner-spin-button, 
+input[type="number"]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Analiz Stiller */
+.analysis-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.analysis-section:last-child {
+    border-bottom: none;
+}
+
+.analysis-title {
+    margin-bottom: 15px;
+    color: var(--dark-color);
+    font-weight: 600;
+    position: relative;
+    padding-left: 15px;
+}
+
+.analysis-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.chart-container {
+    position: relative;
+    height: 230px;
+    margin-bottom: 15px;
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Sınıf Butonları Stili */
+.class-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.class-button {
+    flex: 1 0 calc(50% - 10px);
+    text-align: left;
+    white-space: normal;
+    word-wrap: break-word;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border-radius: var(--border-radius);
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+}
+
+.class-button:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+/* Kriter Modal Düzeltmesi */
+#criteriaModal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#criteria-container .row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+#criteria-container .input-group {
+    flex-wrap: nowrap;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+#criteria-container .input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+#criteria-container .input-group .btn {
+    flex-shrink: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Okul Bilgileri Kartı */
+.card-school-info {
+    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.card-school-info .card-header {
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.card-school-info .card-body {
+    padding: 1.25rem;
+}
+
+.card-school-info .form-floating {
+    margin-bottom: 1rem;
+}
+
+/* Form Elemanları */
+.form-control {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+.form-floating > .form-control {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+    height: calc(3.5rem + 2px);
+}
+
+.form-floating > label {
+    padding: 1rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem);
+    color: var(--primary-color);
+}
+
+/* Modal Stilleri */
+.modal-content {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1.25rem 1.5rem;
+}
+
+.btn-close {
+    opacity: 1;
+    filter: brightness(0) invert(1);
+}
+
+/* Yazdırma Stiller */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        background-color: transparent !important;
+    }
+    
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+    
+    html, body {
+        width: 210mm;
+        height: 297mm;
+        background: #fff !important;
+        color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: Arial, sans-serif !important;
+    }
+    
+    .container-fluid, .row, .col-md-12, .card, .card-body {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #fff !important;
+    }
+    
+    .action-buttons, .card-header, .modal, .toast-container, 
+    #results-container, #grading-container, #analysis-container {
+        display: none !important;
+    }
+    
+    #print-area {
+        display: block !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .print-header {
+        text-align: center !important;
+        margin-bottom: 10px !important;
+        background: #fff !important;
+    }
+    
+    .print-header h2 {
+        font-size: 16px !important;
+        margin: 0 !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-date {
+        font-size: 10px !important;
+        color: #000 !important;
+        margin: 5px 0 !important;
+        background: #fff !important;
+    }
+    
+    .print-content {
+        font-size: 9px !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+    
+    .print-content h3 {
+        font-size: 12px !important;
+        margin: 8px 0 4px !important;
+        border-bottom: 1px solid #000 !important;
+        padding-bottom: 2px !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-table table, .print-analysis table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-bottom: 8px !important;
+        border: 1px solid #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-table th, .print-table td,
+    .print-analysis th, .print-analysis td {
+        border: 1px solid #000 !important;
+        padding: 2px !important;
+        text-align: center !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-table th, .print-analysis th {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
+    
+    .print-stats {
+        font-size: 9px !important;
+        margin-bottom: 8px !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-stats p {
+        margin: 2px 0 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 10px !important;
+        margin-top: 10px !important;
+        background: #fff !important;
+    }
+    
+    .print-chart-container {
+        text-align: center !important;
+        background: #fff !important;
+    }
+    
+    .print-chart-container h4 {
+        font-size: 10px !important;
+        margin: 0 0 5px 0 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-chart-container svg {
+        background: #fff !important;
+    }
+    
+    .print-chart-container svg text {
+        fill: #000 !important;
+    }
+    
+    .print-chart-container svg rect, 
+    .print-chart-container svg path, 
+    .print-chart-container svg circle {
+        stroke: #000 !important;
+    }
+    
+    .print-chart-container img {
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: 120px !important;
+        background: #fff !important;
+    }
+    
+    .print-recommendations {
+        margin-top: 8px !important;
+        border-top: 1px solid #000 !important;
+        padding-top: 5px !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-criteria-table {
+        font-size: 8px !important;
+        border: 1px solid #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-criteria-table th, .print-criteria-table td {
+        padding: 1px 2px !important;
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    /* Performans sütunu hizalama düzeltmesi */
+    .col-criteria-perf {
+        text-align: center !important;
+    }
+    
+    .print-grade-distribution {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 5px !important;
+        background: #fff !important;
+    }
+    
+    .print-grade-distribution-chart {
+        grid-column: 1 !important;
+        background: #fff !important;
+    }
+    
+    .print-grade-distribution-table {
+        grid-column: 2 !important;
+        background: #fff !important;
+    }
+    
+    .print-criteria-grades-table {
+        font-size: 8px !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+        border: 1px solid #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-criteria-grades-table th, .print-criteria-grades-table td {
+        padding: 1px 2px !important;
+        border: 1px solid #000 !important;
+        text-align: center !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    /* Okul bilgileri başlık stili */
+    .print-header-content {
+        display: flex !important;
+        align-items: center !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .print-logo {
+        font-size: 24px !important;
+        margin-right: 15px !important;
+    }
+    
+    .print-title {
+        flex: 1 !important;
+    }
+    
+    .print-title h2 {
+        font-size: 18px !important;
+        margin: 0 !important;
+        font-weight: bold !important;
+    }
+    
+    .print-subtitle {
+        font-size: 10px !important;
+        margin-top: 5px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+    }
+    
+    .print-header-border {
+        border-bottom: 2px solid #000 !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .print-summary {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-bottom: 10px !important;
+        border: 1px solid #000 !important;
+        padding: 5px !important;
+    }
+    
+    .print-summary-item {
+        text-align: center !important;
+        flex: 1 !important;
+    }
+    
+    .summary-label {
+        font-size: 8px !important;
+        font-weight: bold !important;
+    }
+    
+    .summary-value {
+        font-size: 10px !important;
+    }
+    
+    svg text {
+        fill: #000 !important;
+    }
+    
+    svg rect, svg path, svg circle {
+        fill: currentColor !important;
+    }
+}
+
+/* Responsive Stiller */
+@media (max-width: 992px) {
+    .action-buttons .btn {
+        width: calc(50% - 20px);
+        margin: 10px !important;
+        min-width: auto;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+    
+    .card-header h4 {
+        font-size: 1.1rem;
+    }
+    
+    .grade-actions {
+        margin-top: 10px;
+    }
+    
+    .card-header.bg-info {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .action-buttons .btn {
+        width: 100%;
+        margin: 5px 0 !important;
+    }
+    
+    .chart-container {
+        height: 170px;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .criteria-col {
+        width: 55px;
+        max-width: 55px;
+    }
+    
+    .criteria-input, .total-input {
+        width: 45px;
+        padding: 2px;
+    }
+    
+    .class-button {
+        flex: 1 0 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-card .card-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .chart-container {
+        height: 140px;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.4rem 0.6rem;
+    }
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Toast Bildirimleri */
+.toast {
+    background: white;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.toast-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    border-bottom: none;
+}
+
+.toast-body {
+    padding: 1rem;
+}
+
+/* Özel Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Boş Tablo Mesajı */
+.empty-table-message td {
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.01);
+}
+
+.empty-table-message i {
+    color: rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.5rem;
+}
+
+.empty-table-message span {
+    font-size: 0.9rem;
+}
+
+/* Yükleme Göstergesi */
+#pdf-loading {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.progress-bar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+/* İşlem Butonları */
+.action-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 2px;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+}
+
+.action-btn i {
+    font-size: 0.9rem;
+}
+
+/* Özel Eklentiler */
+.badge {
+    padding: 0.4em 0.6em;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.text-muted {
+    color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.small {
+    font-size: 0.85rem;
+}
+
+/* Mobil Optimizasyonları */
+@media (max-width: 480px) {
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .form-floating > .form-control {
+        height: calc(3.2rem + 2px);
+    }
+    
+    .form-floating > label {
+        padding: 0.8rem 0.75rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.4rem;
+    }
+}

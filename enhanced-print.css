@@ -1,0 +1,604 @@
+/* Geliştirilmiş yazdırma stilleri */
+@media print {
+    /* Temel yazdırma ayarları */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    @page {
+        size: A4;
+        margin: 0.5cm;
+    }
+    
+    html, body {
+        width: 210mm;
+        height: 297mm;
+        background: #fff !important;
+        color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: Arial, sans-serif !important;
+    }
+    
+    /* Yazdırma alanı */
+    #print-area {
+        display: block !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Başlık bölümü */
+    .print-header-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 5px !important;
+        background: #fff !important;
+    }
+    
+    .print-logo {
+        font-size: 20px !important;
+        margin-right: 10px !important;
+    }
+    
+    .print-title {
+        text-align: center !important;
+    }
+    
+    .print-title h2 {
+        font-size: 16px !important;
+        margin: 0 !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-title h3 {
+        font-size: 14px !important;
+        margin: 2px 0 !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-title h4 {
+        font-size: 12px !important;
+        margin: 2px 0 !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    .print-subtitle {
+        display: flex;
+        justify-content: space-between;
+        font-size: 9px !important;
+        margin-top: 3px !important;
+    }
+    
+    .print-class {
+        font-weight: bold !important;
+    }
+    
+    .print-date-time {
+        font-style: italic !important;
+    }
+    
+    .print-header-border {
+        border-bottom: 1px solid #000 !important;
+        margin-bottom: 5px !important;
+    }
+    
+    /* Özet bilgiler */
+    .print-summary {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0 !important;
+        border: 1px solid #000 !important;
+        padding: 3px !important;
+        background: #f9f9f9 !important;
+    }
+    
+    .print-summary-item {
+        text-align: center !important;
+        padding: 0 3px !important;
+    }
+    
+    .summary-label {
+        font-size: 7px !important;
+        font-weight: bold !important;
+    }
+    
+    .summary-value {
+        font-size: 10px !important;
+        font-weight: bold !important;
+    }
+    
+    /* Bölüm başlıkları */
+    .print-section {
+        margin-bottom: 8px !important;
+        page-break-inside: avoid !important;
+    }
+    
+    .print-section-title {
+        font-size: 12px !important;
+        margin: 5px 0 3px !important;
+        border-bottom: 1px solid #000 !important;
+        padding-bottom: 1px !important;
+        color: #000 !important;
+        background: #fff !important;
+        font-weight: bold !important;
+        text-align: left !important;
+    }
+    
+    .print-subsection {
+        margin-bottom: 5px !important;
+        page-break-inside: avoid !important;
+    }
+    
+    .print-subsection-title {
+        font-size: 10px !important;
+        margin: 4px 0 2px !important;
+        color: #000 !important;
+        background: #fff !important;
+        font-weight: bold !important;
+        text-align: left !important;
+    }
+    
+    /* Öğrenci tablosu */
+    .print-student-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-bottom: 5px !important;
+        border: 1px solid #000 !important;
+        font-size: 8px !important;
+        table-layout: fixed !important;
+    }
+    
+    .print-student-table th, 
+    .print-student-table td {
+        border: 1px solid #000 !important;
+        padding: 2px !important;
+        text-align: center !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .print-student-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold !important;
+    }
+    
+    .col-no {
+        width: 25px !important;
+    }
+    
+    .col-name {
+        width: 120px !important;
+        text-align: left !important;
+        white-space: normal !important;
+    }
+    
+    .col-criteria {
+        width: auto !important;
+        min-width: 20px !important;
+    }
+    
+    .col-total {
+        width: 25px !important;
+        font-weight: bold !important;
+    }
+    
+    .even-row {
+        background-color: #ffffff !important;
+    }
+    
+    .odd-row {
+        background-color: #f9f9f9 !important;
+    }
+    
+    /* Not renkleri */
+    .grade-excellent {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
+    
+    .grade-good {
+        background-color: #d1ecf1 !important;
+        color: #0c5460 !important;
+    }
+    
+    .grade-average {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+    }
+    
+    .grade-below-average {
+        background-color: #ffe5d0 !important;
+        color: #7d4a00 !important;
+    }
+    
+    .grade-poor {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+    }
+    
+    /* Genel değerlendirme */
+    .print-general-assessment {
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .print-general-assessment p {
+        margin: 3px 0 !important;
+    }
+    
+    /* Grid düzeni */
+    .print-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 5px !important;
+        margin: 5px 0 !important;
+    }
+    
+    /* Not dağılımı */
+    .print-distribution {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 3px !important;
+    }
+    
+    .print-chart-container {
+        text-align: center !important;
+        background-color: white !important;
+    }
+    
+    .print-chart-container div {
+        background-color: white !important;
+        border: 1px solid #ddd !important;
+        padding: 5px !important;
+    }
+    
+    .print-chart-bar {
+        height: 10px !important;
+        margin-bottom: 3px !important;
+        position: relative !important;
+        background-color: #e9ecef !important;
+    }
+    
+    .print-chart-bar-fill {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100% !important;
+        text-align: right !important;
+        padding-right: 3px !important;
+        font-size: 7px !important;
+        line-height: 10px !important;
+        color: white !important;
+        font-weight: bold !important;
+    }
+    
+    .print-distribution-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1px solid #000 !important;
+        font-size: 7px !important;
+        table-layout: fixed !important;
+    }
+    
+    .print-distribution-table th,
+    .print-distribution-table td {
+        border: 1px solid #000 !important;
+        padding: 1px !important;
+        text-align: center !important;
+    }
+    
+    .print-distribution-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold !important;
+    }
+    
+    .grade-range {
+        text-align: left !important;
+        padding-left: 3px !important;
+        font-weight: bold !important;
+    }
+    
+    .grade-range.excellent {
+        color: #155724 !important;
+    }
+    
+    .grade-range.good {
+        color: #0c5460 !important;
+    }
+    
+    .grade-range.average {
+        color: #856404 !important;
+    }
+    
+    .grade-range.below-average {
+        color: #7d4a00 !important;
+    }
+    
+    .grade-range.poor {
+        color: #721c24 !important;
+    }
+    
+    /* Başarı sıralaması */
+    .print-ranking-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1px solid #000 !important;
+        font-size: 8px !important;
+        table-layout: fixed !important;
+    }
+    
+    .print-ranking-table th,
+    .print-ranking-table td {
+        border: 1px solid #000 !important;
+        padding: 1px !important;
+        text-align: center !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .print-ranking-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold !important;
+    }
+    
+    /* Kriter tablosu */
+    .print-criteria-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1px solid #000 !important;
+        font-size: 8px !important;
+        margin-bottom: 5px !important;
+        table-layout: fixed !important;
+    }
+    
+    .print-criteria-table th,
+    .print-criteria-table td {
+        border: 1px solid #000 !important;
+        padding: 2px !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .print-criteria-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold !important;
+        text-align: center !important;
+    }
+    
+    .col-criteria-name {
+        width: 100px !important;
+        text-align: left !important;
+    }
+    
+    .col-criteria-avg,
+    .col-criteria-high,
+    .col-criteria-low {
+        width: 50px !important;
+        text-align: center !important;
+    }
+    
+    .col-criteria-perf {
+        width: auto !important;
+        text-align: center !important;
+    }
+    
+    /* İlerleme çubuğu */
+    .print-progress-bar {
+        width: 100% !important;
+        background-color: #e9ecef !important;
+        border-radius: 2px !important;
+        height: 12px !important;
+        overflow: hidden !important;
+    }
+    
+    .print-progress-fill {
+        height: 100% !important;
+        text-align: center !important;
+        font-size: 7px !important;
+        line-height: 12px !important;
+        color: white !important;
+        font-weight: bold !important;
+    }
+    
+    .performance-excellent {
+        background-color: #28a745 !important;
+    }
+    
+    .performance-good {
+        background-color: #17a2b8 !important;
+    }
+    
+    .performance-average {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    
+    .performance-below-average {
+        background-color: #fd7e14 !important;
+    }
+    
+    .performance-poor {
+        background-color: #dc3545 !important;
+    }
+    
+    /* Öneriler */
+    .print-recommendations {
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        border: 1px solid #000 !important;
+        padding: 3px !important;
+        background-color: #f9f9f9 !important;
+    }
+    
+    .print-recommendations h5 {
+        font-size: 9px !important;
+        margin: 3px 0 2px !important;
+        font-weight: bold !important;
+    }
+    
+    .print-recommendations p {
+        margin: 2px 0 !important;
+    }
+    
+    .print-recommendations ul {
+        margin: 2px 0 !important;
+        padding-left: 12px !important;
+    }
+    
+    .print-recommendations li {
+        margin-bottom: 2px !important;
+    }
+    
+    /* İstatistiksel analiz tablosu */
+    .print-stats-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1px solid #000 !important;
+        font-size: 8px !important;
+        margin-bottom: 5px !important;
+        table-layout: fixed !important;
+    }
+    
+    .print-stats-table th,
+    .print-stats-table td {
+        border: 1px solid #000 !important;
+        padding: 2px !important;
+        overflow: hidden !important;
+    }
+    
+    .print-stats-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold !important;
+        text-align: center !important;
+    }
+    
+    .print-stats-table td:first-child {
+        width: 25% !important;
+        text-align: left !important;
+        font-weight: bold !important;
+    }
+    
+    .print-stats-table td:nth-child(2) {
+        width: 15% !important;
+        text-align: center !important;
+    }
+    
+    .print-stats-table td:nth-child(3) {
+        width: 60% !important;
+        text-align: left !important;
+    }
+    
+    /* Kriter analizi */
+    .print-criteria-analysis {
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .print-criteria-analysis-content {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 5px !important;
+    }
+    
+    .criteria-analysis-item {
+        border: 1px solid #ddd !important;
+        padding: 3px !important;
+        background-color: #f9f9f9 !important;
+    }
+    
+    .criteria-analysis-item h5 {
+        font-size: 8px !important;
+        margin: 0 0 2px 0 !important;
+        font-weight: bold !important;
+        border-bottom: 1px dotted #ccc !important;
+        padding-bottom: 1px !important;
+    }
+    
+    .criteria-analysis-item p {
+        margin: 2px 0 !important;
+    }
+    
+    /* Genel sonuç */
+    .print-general-conclusion {
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        border: 1px solid #ddd !important;
+        padding: 3px !important;
+        background-color: #f9f9f9 !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .print-general-conclusion p {
+        margin: 2px 0 !important;
+    }
+    
+    .print-general-conclusion ul {
+        margin: 2px 0 !important;
+        padding-left: 12px !important;
+    }
+    
+    .print-general-conclusion li {
+        margin-bottom: 1px !important;
+    }
+    
+    /* Öneriler */
+    .print-suggestions {
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        border: 1px solid #ddd !important;
+        padding: 3px !important;
+        background-color: #f9f9f9 !important;
+    }
+    
+    .print-suggestions p {
+        margin: 2px 0 !important;
+    }
+    
+    .print-suggestions ul {
+        margin: 2px 0 !important;
+        padding-left: 12px !important;
+    }
+    
+    .print-suggestions li {
+        margin-bottom: 1px !important;
+    }
+    
+    /* Renk sınıfları */
+    .excellent {
+        color: #155724 !important;
+    }
+    
+    .good {
+        color: #0c5460 !important;
+    }
+    
+    .average {
+        color: #856404 !important;
+    }
+    
+    .below-average {
+        color: #7d4a00 !important;
+    }
+    
+    .poor {
+        color: #721c24 !important;
+    }
+}

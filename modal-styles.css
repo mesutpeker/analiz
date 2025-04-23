@@ -1,0 +1,236 @@
+/* Özel Modal Stilleri */
+.custom-modal .modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    overflow: hidden;
+}
+
+.custom-modal .modal-header {
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    border-bottom: none;
+}
+
+.custom-modal .modal-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal .modal-header .modal-title {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.custom-modal .modal-header .modal-title i {
+    font-size: 1.4rem;
+    margin-right: 0.75rem;
+}
+
+.custom-modal .modal-body {
+    padding: 1.5rem;
+    background: #f8f9fa;
+}
+
+.custom-modal .modal-footer {
+    border-top: none;
+    padding: 1.25rem 1.5rem;
+    background: #f8f9fa;
+}
+
+.custom-modal .btn-close {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin: -0.5rem;
+    opacity: 1;
+    transition: all 0.2s;
+}
+
+.custom-modal .btn-close:hover {
+    background-color: rgba(255, 255, 255, 1);
+    transform: rotate(90deg);
+}
+
+/* PDF Modal */
+.pdf-modal .modal-header {
+    background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
+    color: white;
+}
+
+.pdf-modal .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+}
+
+.pdf-modal .form-control:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+}
+
+.pdf-modal .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.pdf-modal .btn-primary {
+    background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    transition: all 0.3s;
+}
+
+.pdf-modal .btn-primary:hover {
+    background: linear-gradient(135deg, #3a56d4 0%, #4361ee 100%);
+    box-shadow: 0 6px 8px rgba(67, 97, 238, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Sınıf Ekleme Modal */
+.class-modal .modal-header {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+}
+
+.class-modal .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+}
+
+.class-modal .form-control:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+}
+
+.class-modal .btn-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+    transition: all 0.3s;
+}
+
+.class-modal .btn-success:hover {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    box-shadow: 0 6px 8px rgba(46, 204, 113, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Öğrenci Ekleme Modal */
+.student-modal .modal-header {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+}
+
+.student-modal .form-control, 
+.student-modal .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+}
+
+.student-modal .form-control:focus,
+.student-modal .form-select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+.student-modal .btn-info {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+    transition: all 0.3s;
+}
+
+.student-modal .btn-info:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+    box-shadow: 0 6px 8px rgba(52, 152, 219, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Kriter İsimleri Düzenleme Modal */
+.criteria-modal .modal-header {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: white;
+}
+
+.criteria-modal .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+}
+
+.criteria-modal .form-control:focus {
+    border-color: #9b59b6;
+    box-shadow: 0 0 0 0.25rem rgba(155, 89, 182, 0.25);
+}
+
+.criteria-modal .btn-primary {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(155, 89, 182, 0.2);
+    transition: all 0.3s;
+}
+
+.criteria-modal .btn-primary:hover {
+    background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+    box-shadow: 0 6px 8px rgba(155, 89, 182, 0.3);
+    transform: translateY(-2px);
+}
+
+.criteria-modal .btn-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+    transition: all 0.3s;
+}
+
+.criteria-modal .btn-success:hover {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    box-shadow: 0 6px 8px rgba(46, 204, 113, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Ortak Buton Stilleri */
+.custom-modal .btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.custom-modal .btn-secondary {
+    background: #6c757d;
+    border: none;
+    box-shadow: 0 4px 6px rgba(108, 117, 125, 0.2);
+}
+
+.custom-modal .btn-secondary:hover {
+    background: #5a6268;
+    box-shadow: 0 6px 8px rgba(108, 117, 125, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Animasyon Efektleri */
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-modal .modal-content {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}

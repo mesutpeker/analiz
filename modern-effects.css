@@ -1,0 +1,253 @@
+/* Animasyonlar ve Geçişler */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Özel Neumorfik Efektler */
+.neumorphic {
+    border-radius: 10px;
+    background: linear-gradient(145deg, #f0f0f0, #ffffff);
+    box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
+}
+
+.neumorphic-inset {
+    border-radius: 10px;
+    background: #f0f0f0;
+    box-shadow: inset 5px 5px 10px #d1d1d1, inset -5px -5px 10px #ffffff;
+}
+
+/* Cam Efekti (Glassmorphism) */
+.glass {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* 3D Dönüşüm Efektleri */
+.card-3d-effect {
+    transition: transform 0.5s ease;
+    transform-style: preserve-3d;
+}
+
+.card-3d-effect:hover {
+    transform: rotateY(5deg) rotateX(5deg);
+}
+
+/* Gölge Efektleri */
+.shadow-hover {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.shadow-hover:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    transform: translateY(-5px);
+}
+
+/* Parıltı Efekti */
+.btn-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right, 
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+}
+
+/* Özel Renk Geçişleri */
+.gradient-primary {
+    background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
+    color: white;
+}
+
+.gradient-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+}
+
+.gradient-info {
+    background: linear-gradient(135deg, #4895ef 0%, #3a7bd5 100%);
+    color: white;
+}
+
+.gradient-warning {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+}
+
+.gradient-danger {
+    background: linear-gradient(135deg, #e63946 0%, #c0392b 100%);
+    color: white;
+}
+
+/* Mobil Dokunmatik İyileştirmeleri */
+@media (max-width: 768px) {
+    .btn, .form-control, .card-header, .card-body {
+        touch-action: manipulation;
+    }
+    
+    input, select, textarea {
+        font-size: 16px !important; /* iOS zoom sorununu önler */
+    }
+    
+    .action-btn {
+        width: 44px;
+        height: 44px;
+        margin: 0 4px;
+    }
+    
+    .action-btn i {
+        font-size: 1.1rem;
+    }
+}
+
+/* Dokunmatik Cihazlar İçin Hover Efektleri */
+@media (hover: hover) {
+    .btn:hover {
+        transform: translateY(-3px);
+    }
+    
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Responsive Tablo İyileştirmeleri */
+@media (max-width: 576px) {
+    .table-responsive {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table th {
+        white-space: nowrap;
+    }
+    
+    .criteria-col {
+        width: 50px;
+        max-width: 50px;
+    }
+}
+
+/* Yükleme Animasyonları */
+.loading-spinner {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Özel Bildirim Stilleri */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    border-left: 4px solid #2ecc71;
+}
+
+.notification-error {
+    border-left: 4px solid #e63946;
+}
+
+.notification-info {
+    border-left: 4px solid #4895ef;
+}
+
+/* Erişilebilirlik İyileştirmeleri */
+:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Karanlık Mod Desteği */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #4cc9f0;
+        --primary-dark: #4895ef;
+        --secondary-color: #3f37c9;
+        --success-color: #2ecc71;
+        --info-color: #4895ef;
+        --warning-color: #f72585;
+        --danger-color: #e63946;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+    }
+    
+    /* Karanlık mod için özel stiller burada tanımlanabilir */
+}
