@@ -436,18 +436,12 @@ function saveCriteriaNames() {
     for (let i = 0; i < currentCriteriaCount; i++) {
         const input = document.getElementById(`criteria-${i + 1}`);
         if (input) {
-            // Yazdırma için özel ismi sakla
+            // Sadece yazdırma için özel ismi sakla
             displayNames[i] = input.value.trim() || `Soru ${i + 1}`;
-            // Uygulama sayfasında standart isim göster
+            // Uygulama sayfasında standart isim göster - değiştirilmeyecek
             criteriaNames[i] = `Soru ${i + 1}`;
         }
     }
-    
-    // Tablo başlıklarını güncelle
-    updateCriteriaHeaders();
-    
-    // Tablo sütunlarını güncelle
-    updateTableColumns();
     
     // Modal'ı kapat
     const criteriaModal = bootstrap.Modal.getInstance(document.getElementById('criteriaModal'));
@@ -456,7 +450,7 @@ function saveCriteriaNames() {
     }
     
     // Bildirim göster
-    showToast('Soru isimleri başarıyla güncellendi.');
+    showToast('Soru isimleri başarıyla güncellendi. Değişiklikler sadece yazdırma çıktısında görünecektir.');
     
     debugLog("Soru isimleri kaydedildi:", displayNames);
 }

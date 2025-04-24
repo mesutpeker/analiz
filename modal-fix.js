@@ -8,16 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Kriter isimlerini kaydet butonuna tıklandığında
     document.getElementById('save-criteria').addEventListener('click', function() {
-        // Kriter isimlerini güncelle
+        // Kriter isimlerini güncelle - sadece displayNames için
         for (let i = 0; i < criteriaNames.length; i++) {
             const input = document.getElementById(`criteria-${i + 1}`);
             if (input) {
-                criteriaNames[i] = input.value.trim() || `Soru ${i + 1}`;
+                // Sadece yazdırma için kullanılan displayNames'i güncelle
+                displayNames[i] = input.value.trim() || `Soru ${i + 1}`;
+                // criteriaNames değişkenini değiştirme - standart isimler kalsın
             }
         }
-        
-        // Tablo başlıklarını güncelle
-        updateCriteriaHeaders();
         
         // Modalı kapat
         const criteriaModal = bootstrap.Modal.getInstance(document.getElementById('criteriaModal'));
@@ -25,11 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
             criteriaModal.hide();
         }
         
-        // Not tablosunu yeniden oluştur
-        renderGradeTable();
-        
         // Bildirim göster
-        showToast('Soru isimleri başarıyla güncellendi.');
+        showToast('Soru isimleri başarıyla güncellendi. Değişiklikler sadece yazdırma çıktısında görünecektir.');
     });
     
     // Analiz modalı kapatıldığında arka plan karartısını kaldır
