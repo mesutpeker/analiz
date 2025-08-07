@@ -36,15 +36,36 @@ function preparePrintAfterAnalysis() {
         minute: '2-digit'
     });
     
-    // Sınıf bilgisi
-    const className = Object.keys(classesByName).find(name => 
-        classesByName[name].some(s => 
-            currentStudents.some(cs => 
-                cs.student_no === s.student_no && 
+    // Sınıf adını bul - daha esnek eşleştirme
+    let className = "Belirtilmemiş Sınıf";
+
+    // Önce tam eşleşme dene
+    const exactMatch = Object.keys(classesByName).find(name =>
+        classesByName[name].some(s =>
+            currentStudents.some(cs =>
+                cs.student_no === s.student_no &&
                 cs.full_name === `${s.first_name} ${s.last_name}`
             )
         )
-    ) || "Belirtilmemiş Sınıf";
+    );
+
+    if (exactMatch) {
+        className = exactMatch;
+    } else {
+        // Öğrenci numarası bazında eşleştirme dene
+        const numberMatch = Object.keys(classesByName).find(name =>
+            classesByName[name].some(s =>
+                currentStudents.some(cs => cs.student_no === s.student_no)
+            )
+        );
+
+        if (numberMatch) {
+            className = numberMatch;
+        } else if (Object.keys(classesByName).length > 0) {
+            // Son çare olarak ilk sınıfı kullan
+            className = Object.keys(classesByName)[0];
+        }
+    }
     
     // Üst bilgi
     printDate.innerHTML = `
@@ -383,13 +404,23 @@ function preparePrintAfterAnalysis() {
         `;
     }
     
+    // Öğretmen imza alanı
+    const printFooter = printArea.querySelector('.print-teacher-signature');
+    const teacherName = schoolInfo.teacherName || "Öğretmen Adı Soyadı";
+
+    printFooter.innerHTML = `
+        <div style="margin-top: 40px;">
+            <div>${teacherName}</div>
+        </div>
+    `;
+
     // Yazdırma işlemi
     setTimeout(() => {
         printArea.classList.remove('d-none');
         window.print();
         printArea.classList.add('d-none');
     }, 500);
-    
+
     debugLog("Yazdırma işlemi tamamlandı");
 }
 

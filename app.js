@@ -45,7 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Öğrenci silme onay butonu
     document.getElementById('confirm-delete-student').addEventListener('click', confirmDeleteStudent);
-    
+
+    // Öğrenci düzenleme kaydet butonu
+    document.getElementById('save-student-edit').addEventListener('click', saveStudentEdit);
+
     // Kriter ekleme butonu
     document.getElementById('add-criteria-btn').addEventListener('click', addCriteria);
     
@@ -536,22 +539,114 @@ function updateCriteriaHeaders() {
     debugLog("Kriter başlıkları güncellendi");
 }
 
+// Öğrenci düzenleme modalını gösterme
+let currentStudentToEdit = null;
+
+function showEditStudentModal(studentIndex) {
+    if (studentIndex < 0 || studentIndex >= currentStudents.length) {
+        console.error("Geçersiz öğrenci indeksi:", studentIndex);
+        return;
+    }
+
+    const student = currentStudents[studentIndex];
+    currentStudentToEdit = studentIndex;
+
+    // Öğrenci bilgilerini form alanlarına doldur
+    document.getElementById('edit-student-no').value = student.student_no;
+
+    // Full name'i ad ve soyada ayır
+    const nameParts = student.full_name.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    document.getElementById('edit-student-first-name').value = firstName;
+    document.getElementById('edit-student-last-name').value = lastName;
+
+    const editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+    editModal.show();
+
+    debugLog(`Öğrenci düzenleme modalı gösteriliyor: ${student.full_name}`);
+}
+
+// Öğrenci düzenleme kaydetme
+function saveStudentEdit() {
+    if (currentStudentToEdit === null) return;
+
+    const studentNo = document.getElementById('edit-student-no').value.trim();
+    const firstName = document.getElementById('edit-student-first-name').value.trim();
+    const lastName = document.getElementById('edit-student-last-name').value.trim();
+
+    // Validasyon
+    if (!studentNo || !firstName || !lastName) {
+        alert('Lütfen tüm alanları doldurun.');
+        return;
+    }
+
+    // Aynı numarada başka öğrenci var mı kontrol et (kendisi hariç)
+    const existingStudent = currentStudents.find((s, index) =>
+        s.student_no === studentNo && index !== currentStudentToEdit
+    );
+
+    if (existingStudent) {
+        alert('Bu öğrenci numarası zaten kullanılıyor.');
+        return;
+    }
+
+    const oldStudent = currentStudents[currentStudentToEdit];
+    const newFullName = `${firstName} ${lastName}`;
+
+    // currentStudents dizisini güncelle
+    currentStudents[currentStudentToEdit].student_no = studentNo;
+    currentStudents[currentStudentToEdit].full_name = newFullName;
+
+    // classesByName dizisini de güncelle
+    Object.keys(classesByName).forEach(className => {
+        const studentInClass = classesByName[className].find(s =>
+            s.student_no === oldStudent.student_no &&
+            `${s.first_name} ${s.last_name}` === oldStudent.full_name
+        );
+
+        if (studentInClass) {
+            studentInClass.student_no = studentNo;
+            studentInClass.first_name = firstName;
+            studentInClass.last_name = lastName;
+        }
+    });
+
+    // Tabloyu güncelle
+    renderGradeTable();
+
+    // Modal'ı kapat
+    const editModal = bootstrap.Modal.getInstance(document.getElementById('editStudentModal'));
+    if (editModal) {
+        editModal.hide();
+    }
+
+    // Bildirim göster
+    showToast(`"${newFullName}" öğrencisinin bilgileri başarıyla güncellendi.`);
+
+    // Düzenleme işlemini sıfırla
+    currentStudentToEdit = null;
+
+    debugLog(`Öğrenci güncellendi: ${oldStudent.full_name} -> ${newFullName}`);
+}
+
 // Öğrenci silme modalını gösterme
 function showDeleteStudentModal(studentIndex) {
     if (studentIndex < 0 || studentIndex >= currentStudents.length) {
         console.error("Geçersiz öğrenci indeksi:", studentIndex);
         return;
     }
-    
+
     const student = currentStudents[studentIndex];
     const deleteInfo = document.getElementById('delete-student-info');
-    
+
     deleteInfo.textContent = `${student.student_no} - ${student.full_name}`;
     currentStudentToDelete = studentIndex;
-    
+
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteStudentModal'));
     deleteModal.show();
-    
+
     debugLog(`Öğrenci silme modalı gösteriliyor: ${student.full_name}`);
 }
 
@@ -734,12 +829,23 @@ function renderGradeTable() {
         
         // İşlemler
         const cellActions = document.createElement('td');
+
+        // Düzenleme butonu
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-sm btn-primary me-1';
+        editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
+        editBtn.title = 'Öğrenciyi Düzenle';
+        editBtn.addEventListener('click', () => showEditStudentModal(index));
+        cellActions.appendChild(editBtn);
+
+        // Silme butonu
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'btn btn-sm btn-danger';
         deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
         deleteBtn.title = 'Öğrenciyi Sil';
         deleteBtn.addEventListener('click', () => showDeleteStudentModal(index));
         cellActions.appendChild(deleteBtn);
+
         row.appendChild(cellActions);
         
         tableBody.appendChild(row);
@@ -1372,15 +1478,36 @@ function preparePrintAfterAnalysis() {
         minute: '2-digit'
     });
     
-    // Sınıf bilgisi
-    const className = Object.keys(classesByName).find(name => 
-        classesByName[name].some(s => 
-            currentStudents.some(cs => 
-                cs.student_no === s.student_no && 
+    // Sınıf adını bul - daha esnek eşleştirme
+    let className = "Belirtilmemiş Sınıf";
+
+    // Önce tam eşleşme dene
+    const exactMatch = Object.keys(classesByName).find(name =>
+        classesByName[name].some(s =>
+            currentStudents.some(cs =>
+                cs.student_no === s.student_no &&
                 cs.full_name === `${s.first_name} ${s.last_name}`
             )
         )
-    ) || "Belirtilmemiş Sınıf";
+    );
+
+    if (exactMatch) {
+        className = exactMatch;
+    } else {
+        // Öğrenci numarası bazında eşleştirme dene
+        const numberMatch = Object.keys(classesByName).find(name =>
+            classesByName[name].some(s =>
+                currentStudents.some(cs => cs.student_no === s.student_no)
+            )
+        );
+
+        if (numberMatch) {
+            className = numberMatch;
+        } else if (Object.keys(classesByName).length > 0) {
+            // Son çare olarak ilk sınıfı kullan
+            className = Object.keys(classesByName)[0];
+        }
+    }
     
     // Okul bilgilerini hazırla
     const schoolNameText = schoolInfo.schoolName ? schoolInfo.schoolName : "Okul Adı";
@@ -1718,13 +1845,23 @@ function preparePrintAfterAnalysis() {
         `;
     }
     
+    // Öğretmen imza alanı
+    const printFooter = printArea.querySelector('.print-teacher-signature');
+    const teacherName = schoolInfo.teacherName || "Öğretmen Adı Soyadı";
+
+    printFooter.innerHTML = `
+        <div style="margin-top: 40px;">
+            <div>${teacherName}</div>
+        </div>
+    `;
+
     // Yazdırma işlemi
     setTimeout(() => {
         printArea.classList.remove('d-none');
         window.print();
         printArea.classList.add('d-none');
     }, 500);
-    
+
     debugLog("Yazdırma işlemi tamamlandı");
 }
 

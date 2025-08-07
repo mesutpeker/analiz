@@ -140,7 +140,7 @@
                                                 <th class="criteria-col">Soru 9</th>
                                                 <th class="criteria-col">Soru 10</th>
                                                 <th style="width: 80px;">Toplam</th>
-                                                <th style="width: 80px;">İşlemler</th>
+                                                <th style="width: 120px;">İşlemler</th>
                                             </tr>
                                         </thead>
                                         <tbody id="grade-table-body">
@@ -357,6 +357,36 @@
         </div>
     </div>
     
+    <!-- Öğrenci Düzenleme Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-modal student-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentModalLabel"><i class="bi bi-pencil-square"></i>Öğrenci Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit-student-no" class="form-label">Öğrenci No</label>
+                        <input type="text" class="form-control" id="edit-student-no" placeholder="Örn: 123">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-student-first-name" class="form-label">Adı</label>
+                        <input type="text" class="form-control" id="edit-student-first-name" placeholder="Örn: Ahmet">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-student-last-name" class="form-label">Soyadı</label>
+                        <input type="text" class="form-control" id="edit-student-last-name" placeholder="Örn: Yılmaz">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="save-student-edit">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Öğrenci Silme Onay Modal -->
     <div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -385,6 +415,9 @@
         <div class="print-content">
             <div class="print-table"></div>
             <div class="print-analysis"></div>
+        </div>
+        <div class="print-footer">
+            <div class="print-teacher-signature"></div>
         </div>
     </div>
     

@@ -127,13 +127,13 @@
     transform: translateY(-2px);
 }
 
-/* Öğrenci Ekleme Modal */
+/* Öğrenci Ekleme ve Düzenleme Modal */
 .student-modal .modal-header {
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
     color: white;
 }
 
-.student-modal .form-control, 
+.student-modal .form-control,
 .student-modal .form-select {
     border: 2px solid #e9ecef;
     border-radius: 8px;

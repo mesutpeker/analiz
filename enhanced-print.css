@@ -177,23 +177,27 @@
     }
     
     .col-no {
-        width: 25px !important;
+        width: 30px !important;
+        min-width: 30px !important;
     }
     
     .col-name {
-        width: 120px !important;
+        width: 110px !important;
         text-align: left !important;
         white-space: normal !important;
+        min-width: 110px !important;
     }
     
     .col-criteria {
         width: auto !important;
-        min-width: 20px !important;
+        min-width: 25px !important;
+        max-width: 35px !important;
     }
     
     .col-total {
-        width: 25px !important;
+        width: 40px !important;
         font-weight: bold !important;
+        min-width: 40px !important;
     }
     
     .even-row {
@@ -600,5 +604,20 @@
     
     .poor {
         color: #721c24 !important;
+    }
+
+    /* Öğretmen imza alanı */
+    .print-footer {
+        margin-top: 20px !important;
+        page-break-inside: avoid !important;
+    }
+
+    .print-teacher-signature {
+        text-align: right !important;
+        font-family: "Times New Roman", serif !important;
+        font-size: 12pt !important;
+        color: #000 !important;
+        margin-top: 30px !important;
+        padding-right: 20px !important;
     }
 }
