@@ -3,8 +3,9 @@ let debugMode = true; // Debug modunu açık bırakalım
 let classesByName = {};
 let currentStudents = [];
 let analysisData = null;
-let criteriaNames = Array.from({length: 10}, (_, i) => `Soru ${i + 1}`);
-let displayNames = Array.from({length: 10}, (_, i) => `Soru ${i + 1}`); // Yazdırma için kullanılacak isimler
+let criteriaNames = Array.from({ length: 10 }, (_, i) => `Soru ${i + 1}`);
+let displayNames = Array.from({ length: 10 }, (_, i) => `Soru ${i + 1}`); // Yazdırma için kullanılacak isimler
+let criteriaMaxScores = Array.from({ length: 10 }, () => 10); // Her soru için varsayılan 10 puan
 let currentStudentToDelete = null;
 let currentCriteriaCount = 10; // Başlangıçta 10 kriter var
 
@@ -17,32 +18,32 @@ let schoolInfo = {
 };
 
 // PDF yükleme ve işleme
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Debug modu
-    window.debugLog = function(...args) {
+    window.debugLog = function (...args) {
         if (debugMode) {
             console.log(...args);
         }
     };
-    
+
     // PDF yükleme butonu
     document.getElementById('load-pdf').addEventListener('click', loadPDF);
-    
+
     // Analiz butonu
     document.getElementById('analyze-btn').addEventListener('click', analyzeGrades);
-    
+
     // Yazdırma butonu
     document.getElementById('print-btn').addEventListener('click', preparePrint);
-    
+
     // Sınıf ekleme butonu
     document.getElementById('add-class').addEventListener('click', addClass);
-    
+
     // Öğrenci ekleme butonu
     document.getElementById('add-student').addEventListener('click', addStudent);
-    
+
     // Kriter isimlerini kaydetme butonu
     document.getElementById('save-criteria').addEventListener('click', saveCriteriaNames);
-    
+
     // Öğrenci silme onay butonu
     document.getElementById('confirm-delete-student').addEventListener('click', confirmDeleteStudent);
 
@@ -51,19 +52,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Kriter ekleme butonu
     document.getElementById('add-criteria-btn').addEventListener('click', addCriteria);
-    
+
     // Okul bilgilerini kaydetme
     document.getElementById('school-name').addEventListener('input', updateSchoolInfo);
     document.getElementById('course-name').addEventListener('input', updateSchoolInfo);
     document.getElementById('exam-period').addEventListener('input', updateSchoolInfo);
     document.getElementById('teacher-name').addEventListener('input', updateSchoolInfo);
-    
+
     // Örnek öğrenciler ekle
     addSampleStudents();
-    
+
     // Kriter başlıklarını güncelle
     updateCriteriaHeaders();
-    
+
     debugLog("Uygulama başlatıldı");
 });
 
@@ -71,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateSchoolInfo(event) {
     const inputId = event.target.id;
     const value = event.target.value.trim();
-    
-    switch(inputId) {
+
+    switch (inputId) {
         case 'school-name':
             schoolInfo.schoolName = value;
             break;
@@ -86,7 +87,7 @@ function updateSchoolInfo(event) {
             schoolInfo.teacherName = value;
             break;
     }
-    
+
     debugLog("Okul bilgileri güncellendi:", schoolInfo);
 }
 
@@ -95,7 +96,7 @@ function addSampleStudents() {
     // Örnek bir sınıf oluştur
     const className = "Örnek Sınıf";
     classesByName[className] = [];
-    
+
     // Örnek öğrenciler
     const sampleStudents = [
         { student_no: "101", first_name: "Ali", last_name: "Yılmaz" },
@@ -104,18 +105,18 @@ function addSampleStudents() {
         { student_no: "104", first_name: "Zeynep", last_name: "Çelik" },
         { student_no: "105", first_name: "Mustafa", last_name: "Şahin" }
     ];
-    
+
     // Öğrencileri sınıfa ekle
     sampleStudents.forEach(student => {
         classesByName[className].push(student);
     });
-    
+
     // Öğrenci sınıf seçim listesini güncelle
     updateStudentClassSelect();
-    
+
     // Örnek öğrencileri not tablosuna aktar
     importStudentsToPerformanceTable(className);
-    
+
     debugLog("Örnek öğrenciler eklendi");
 }
 
@@ -123,43 +124,43 @@ function addSampleStudents() {
 async function loadPDF() {
     const fileInput = document.getElementById('pdf-file');
     const file = fileInput.files[0];
-    
+
     if (!file) {
         alert('Lütfen bir PDF dosyası seçin.');
         return;
     }
-    
+
     // Yükleme göstergesini göster
     document.getElementById('pdf-loading').classList.remove('d-none');
-    
+
     try {
         debugLog("PDF yükleme başladı");
-        
+
         // PDF dosyasını oku
         const arrayBuffer = await file.arrayBuffer();
-        
+
         // PDF.js ile PDF'i yükle
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
         const pdf = await loadingTask.promise;
-        
+
         debugLog(`PDF yüklendi, sayfa sayısı: ${pdf.numPages}`);
-        
+
         // PDF'den sınıf bilgilerini çıkar
         classesByName = await extractClassInfo(pdf);
-        
+
         debugLog("Sınıf bilgileri çıkarıldı:", Object.keys(classesByName));
-        
+
         // Sonuçları göster (modalda)
         displayClassesInModal(classesByName);
-        
+
         // Öğrenci sınıf seçim listesini güncelle
         updateStudentClassSelect();
-        
+
         // Modal'ı kapatmayı kaldırdık - kullanıcı sınıf butonlarını görebilsin
-        
+
         // Başarı mesajı göster
         showToast("PDF başarıyla yüklendi ve öğrenci verileri çıkarıldı.");
-        
+
     } catch (error) {
         console.error('PDF işleme hatası:', error);
         alert('PDF işlenirken bir hata oluştu: ' + error.message);
@@ -174,13 +175,13 @@ function displayClassesInModal(classesByName) {
     // PDF yükleme modalını kullan
     const pdfModal = document.getElementById('pdfModal');
     const modalBody = pdfModal.querySelector('.modal-body');
-    
+
     // Yükleme göstergesini gizle
     document.getElementById('pdf-loading').classList.add('d-none');
-    
+
     // Sınıf butonları için container oluştur
     let classButtonsContainer = document.getElementById('class-buttons-container');
-    
+
     if (!classButtonsContainer) {
         classButtonsContainer = document.createElement('div');
         classButtonsContainer.id = 'class-buttons-container';
@@ -189,7 +190,7 @@ function displayClassesInModal(classesByName) {
     } else {
         classButtonsContainer.innerHTML = '';
     }
-    
+
     if (Object.keys(classesByName).length === 0) {
         classButtonsContainer.innerHTML = `
             <div class="alert alert-warning">
@@ -199,11 +200,11 @@ function displayClassesInModal(classesByName) {
         `;
         return;
     }
-    
+
     // Her sınıf için buton oluştur
     Object.keys(classesByName).forEach(className => {
         const students = classesByName[className];
-        
+
         const classButton = document.createElement('button');
         classButton.className = 'btn btn-primary class-button';
         classButton.innerHTML = `
@@ -212,21 +213,21 @@ function displayClassesInModal(classesByName) {
                 <span class="badge bg-light text-dark">${students.length} öğrenci</span>
             </div>
         `;
-        
+
         // Sınıfı yükleme butonuna olay dinleyici ekle
         classButton.addEventListener('click', () => {
             importStudentsToPerformanceTable(className);
-            
+
             // Modalı kapat
             const modal = bootstrap.Modal.getInstance(pdfModal);
             if (modal) {
                 modal.hide();
             }
         });
-        
+
         classButtonsContainer.appendChild(classButton);
     });
-    
+
     // Bilgi metni ekle
     const infoText = document.createElement('div');
     infoText.className = 'mt-3 small text-muted';
@@ -238,7 +239,7 @@ function displayClassesInModal(classesByName) {
 function updateStudentClassSelect() {
     const select = document.getElementById('student-class');
     select.innerHTML = '';
-    
+
     if (Object.keys(classesByName).length === 0) {
         const option = document.createElement('option');
         option.value = '';
@@ -246,49 +247,49 @@ function updateStudentClassSelect() {
         select.appendChild(option);
         return;
     }
-    
+
     Object.keys(classesByName).forEach(className => {
         const option = document.createElement('option');
         option.value = className;
         option.textContent = className;
         select.appendChild(option);
     });
-    
+
     debugLog("Öğrenci sınıf seçim listesi güncellendi");
 }
 
 // Sınıf ekleme
 function addClass() {
     const className = document.getElementById('class-name').value.trim();
-    
+
     if (!className) {
         alert('Lütfen bir sınıf adı girin.');
         return;
     }
-    
+
     if (classesByName[className]) {
         alert('Bu isimde bir sınıf zaten var.');
         return;
     }
-    
+
     // Yeni sınıfı ekle
     classesByName[className] = [];
-    
+
     // Öğrenci sınıf seçim listesini güncelle
     updateStudentClassSelect();
-    
+
     // Modal'ı kapat
     const classModal = bootstrap.Modal.getInstance(document.getElementById('classModal'));
     if (classModal) {
         classModal.hide();
     }
-    
+
     // Form'u temizle
     document.getElementById('class-name').value = '';
-    
+
     // Bildirim göster
     showToast(`"${className}" sınıfı başarıyla eklendi.`);
-    
+
     debugLog(`Yeni sınıf eklendi: ${className}`);
 }
 
@@ -298,47 +299,47 @@ function addStudent() {
     const studentNo = document.getElementById('student-no').value.trim();
     const firstName = document.getElementById('student-first-name').value.trim();
     const lastName = document.getElementById('student-last-name').value.trim();
-    
+
     if (!className) {
         alert('Lütfen bir sınıf seçin.');
         return;
     }
-    
+
     if (!studentNo || !firstName || !lastName) {
         alert('Lütfen tüm öğrenci bilgilerini girin.');
         return;
     }
-    
+
     // Öğrenci numarası kontrolü
     if (classesByName[className].some(student => student.student_no === studentNo)) {
         alert('Bu öğrenci numarası zaten kullanılıyor.');
         return;
     }
-    
+
     // Yeni öğrenciyi ekle
     classesByName[className].push({
         student_no: studentNo,
         first_name: firstName,
         last_name: lastName
     });
-    
+
     // Öğrencileri not tablosuna aktar
     importStudentsToPerformanceTable(className);
-    
+
     // Modal'ı kapat
     const studentModal = bootstrap.Modal.getInstance(document.getElementById('studentModal'));
     if (studentModal) {
         studentModal.hide();
     }
-    
+
     // Form'u temizle
     document.getElementById('student-no').value = '';
     document.getElementById('student-first-name').value = '';
     document.getElementById('student-last-name').value = '';
-    
+
     // Bildirim göster
     showToast(`"${firstName} ${lastName}" öğrencisi başarıyla eklendi.`);
-    
+
     debugLog(`Yeni öğrenci eklendi: ${firstName} ${lastName}`);
 }
 
@@ -348,23 +349,24 @@ function addCriteria() {
         alert('En fazla 20 kriter ekleyebilirsiniz.');
         return;
     }
-    
+
     currentCriteriaCount++;
-    
+
     // Yeni kriter adını ekle
     criteriaNames.push(`Soru ${currentCriteriaCount}`);
     displayNames.push(`Soru ${currentCriteriaCount}`);
-    
+    criteriaMaxScores.push(10); // Yeni soruya varsayılan 10 puan
+
     // Kriter container'ını güncelle
     updateCriteriaContainer();
-    
+
     // Öğrencilerin kriter dizilerini güncelle
     currentStudents.forEach(student => {
         if (!student.criteria[currentCriteriaCount - 1]) {
             student.criteria[currentCriteriaCount - 1] = 0;
         }
     });
-    
+
     debugLog(`Yeni kriter eklendi: Soru ${currentCriteriaCount}`);
 }
 
@@ -372,30 +374,31 @@ function addCriteria() {
 function updateCriteriaContainer() {
     const container = document.getElementById('criteria-container');
     container.innerHTML = '';
-    
+
     // İlk sütun
     const leftColumn = document.createElement('div');
     leftColumn.className = 'col-md-6';
-    
+
     // İkinci sütun
     const rightColumn = document.createElement('div');
     rightColumn.className = 'col-md-6';
-    
+
     // Kriterleri sütunlara dağıt
     criteriaNames.forEach((name, index) => {
         const criteriaDiv = document.createElement('div');
         criteriaDiv.className = 'mb-3';
-        
+
         criteriaDiv.innerHTML = `
             <label for="criteria-${index + 1}" class="form-label">Soru ${index + 1}</label>
             <div class="input-group">
                 <input type="text" class="form-control" id="criteria-${index + 1}" value="${name}" placeholder="Soru adı">
-                ${index >= 10 ? `<button type="button" class="btn btn-outline-danger" onclick="removeCriteria(${index})">
+                <input type="number" class="form-control criteria-score" id="criteria-score-${index + 1}" value="${criteriaMaxScores[index]}" min="1" max="100" placeholder="Puan" style="max-width: 80px;">
+                ${currentCriteriaCount > 1 ? `<button type="button" class="btn btn-outline-danger" onclick="removeCriteria(${index})">
                     <i class="bi bi-trash"></i>
                 </button>` : ''}
             </div>
         `;
-        
+
         // İlk 10 kriteri sol sütuna, diğerlerini sağ sütuna ekle
         if (index < 10) {
             leftColumn.appendChild(criteriaDiv);
@@ -403,139 +406,121 @@ function updateCriteriaContainer() {
             rightColumn.appendChild(criteriaDiv);
         }
     });
-    
+
     container.appendChild(leftColumn);
     container.appendChild(rightColumn);
-    
+
     debugLog("Kriter container'ı güncellendi");
 }
 
 // Kriter silme
 function removeCriteria(index) {
-    if (currentCriteriaCount <= 10) {
-        alert('İlk 10 kriteri silemezsiniz.');
+    if (currentCriteriaCount <= 1) {
+        alert('En az 1 soru kalmalıdır.');
         return;
     }
-    
-    // Kriter adını sil
+
+    // Önce mevcut inputlardaki değerleri güncelle (Kaydedilmemiş değişiklikleri korumak için)
+    for (let i = 0; i < currentCriteriaCount; i++) {
+        const nameInput = document.getElementById(`criteria-${i + 1}`);
+        const scoreInput = document.getElementById(`criteria-score-${i + 1}`);
+
+        if (nameInput) {
+            displayNames[i] = nameInput.value.trim();
+        }
+        if (scoreInput) {
+            criteriaMaxScores[i] = parseInt(scoreInput.value) || 10;
+        }
+    }
+
+    // Kriter adını ve puanını sil
     criteriaNames.splice(index, 1);
     displayNames.splice(index, 1);
+    criteriaMaxScores.splice(index, 1);
     currentCriteriaCount--;
-    
+
+    // İsimleri yeniden numaralandır
+    for (let i = 0; i < currentCriteriaCount; i++) {
+        // Eğer isim "Soru " ile başlıyorsa ve devamında bir sayı varsa, sırasına göre güncelle
+        // Örn: "Soru 7" -> "Soru 6" (eğer 6. sıradaysa)
+        if (/^Soru \d+$/.test(displayNames[i])) {
+            displayNames[i] = `Soru ${i + 1}`;
+        }
+        criteriaNames[i] = `Soru ${i + 1}`;
+    }
+
     // Öğrencilerin kriter dizilerini güncelle
     currentStudents.forEach(student => {
         student.criteria.splice(index, 1);
     });
-    
+
     // Kriter container'ını güncelle
     updateCriteriaContainer();
-    
+
     debugLog(`Kriter silindi: ${index + 1}`);
 }
 
-// Kriter isimlerini kaydetme
+// Kriter isimlerini ve puanlarını kaydetme
 function saveCriteriaNames() {
-    // Kriter isimlerini güncelle
+    let totalScore = 0;
+    const tempScores = [];
+    const tempDisplayNames = [];
+
+    // Önce değerleri al ve toplam puanı hesapla
     for (let i = 0; i < currentCriteriaCount; i++) {
-        const input = document.getElementById(`criteria-${i + 1}`);
-        if (input) {
-            // Sadece yazdırma için özel ismi sakla
-            displayNames[i] = input.value.trim() || `Soru ${i + 1}`;
-            // Uygulama sayfasında standart isim göster - değiştirilmeyecek
-            criteriaNames[i] = `Soru ${i + 1}`;
-        }
+        const scoreInput = document.getElementById(`criteria-score-${i + 1}`);
+        const nameInput = document.getElementById(`criteria-${i + 1}`);
+
+        const score = parseInt(scoreInput?.value) || 0;
+        const name = nameInput?.value.trim() || `Soru ${i + 1}`;
+
+        totalScore += score;
+        tempScores.push(score);
+        tempDisplayNames.push(name);
     }
-    
+
+    if (totalScore > 100) {
+        alert(`Hata: Toplam puan 100'ü geçemez! Şu anki toplam: ${totalScore}`);
+        return;
+    }
+
+    // Kriter isimlerini ve puanlarını güncelle
+    for (let i = 0; i < currentCriteriaCount; i++) {
+        displayNames[i] = tempDisplayNames[i];
+        criteriaNames[i] = `Soru ${i + 1}`;
+        criteriaMaxScores[i] = tempScores[i];
+    }
+
     // Modal'ı kapat
     const criteriaModal = bootstrap.Modal.getInstance(document.getElementById('criteriaModal'));
     if (criteriaModal) {
         criteriaModal.hide();
     }
-    
+
+    // Tabloyu güncelle (yeni max puanlar için)
+    renderGradeTable();
+
     // Bildirim göster
-    showToast('Soru isimleri başarıyla güncellendi. Değişiklikler sadece yazdırma çıktısında görünecektir.');
-    
-    debugLog("Soru isimleri kaydedildi:", displayNames);
+    showToast('Soru isimleri ve puanları başarıyla güncellendi.');
+
+    debugLog("Soru isimleri ve puanları kaydedildi:", displayNames, criteriaMaxScores);
 }
 
-// Tablo sütunlarını güncelleme
-function updateTableColumns() {
-    const table = document.getElementById('grade-table');
-    if (!table) return;
-    
-    const headerRow = table.querySelector('thead tr');
-    const rows = table.querySelectorAll('tbody tr:not(.empty-table-message)');
-    
-    // Mevcut kriter sütunlarını temizle
-    const headerCells = headerRow.querySelectorAll('th.criteria-col');
-    headerCells.forEach(cell => cell.remove());
-    
-    rows.forEach(row => {
-        const criteriaCells = row.querySelectorAll('td.criteria-col');
-        criteriaCells.forEach(cell => cell.remove());
-    });
-    
-    // Toplam sütununu bul
-    const totalHeaderCell = headerRow.querySelector('th:nth-last-child(2)');
-    
-    // Yeni kriter sütunlarını ekle
-    criteriaNames.forEach((name, index) => {
-        // Başlık hücresini ekle
-        const headerCell = document.createElement('th');
-        headerCell.className = 'criteria-col';
-        headerCell.textContent = name;
-        headerRow.insertBefore(headerCell, totalHeaderCell);
-        
-        // Her satıra kriter hücresi ekle
-        rows.forEach(row => {
-            const student = currentStudents[row.dataset.index];
-            const totalCell = row.querySelector('td:nth-last-child(2)');
-            
-            const criteriaCell = document.createElement('td');
-            criteriaCell.className = 'criteria-col';
-            
-            // Öğrenci nesnesinde criteria dizisini güncelle
-            if (student) {
-                if (!student.criteria[index]) {
-                    student.criteria[index] = 0;
-                }
-                
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.className = 'form-control criteria-input';
-                input.min = 0;
-                input.max = 10;
-                input.value = student.criteria[index];
-                input.dataset.studentIndex = row.dataset.index;
-                input.dataset.criteriaIndex = index;
-                
-                input.addEventListener('change', function() {
-                    updateStudentGrade(this);
-                });
-                
-                criteriaCell.appendChild(input);
-            }
-            
-            row.insertBefore(criteriaCell, totalCell);
-        });
-    });
-    
-    debugLog("Tablo sütunları güncellendi");
-}
+
 
 // Kriter başlıklarını güncelleme
 function updateCriteriaHeaders() {
     const table = document.getElementById('grade-table');
     if (!table) return;
-    
+
     const headers = table.querySelectorAll('thead th.criteria-col');
-    
+
     headers.forEach((header, index) => {
         if (index < criteriaNames.length) {
             header.textContent = criteriaNames[index];
         }
     });
-    
+
     debugLog("Kriter başlıkları güncellendi");
 }
 
@@ -653,37 +638,37 @@ function showDeleteStudentModal(studentIndex) {
 // Öğrenci silme onayı
 function confirmDeleteStudent() {
     if (currentStudentToDelete === null) return;
-    
+
     // Silinecek öğrenciyi bul
     const student = currentStudents[currentStudentToDelete];
-    
+
     // Tüm sınıflarda ara ve sil
     Object.keys(classesByName).forEach(className => {
-        classesByName[className] = classesByName[className].filter(s => 
-            !(s.student_no === student.student_no && 
-              s.first_name === student.first_name && 
-              s.last_name === student.last_name)
+        classesByName[className] = classesByName[className].filter(s =>
+            !(s.student_no === student.student_no &&
+                s.first_name === student.first_name &&
+                s.last_name === student.last_name)
         );
     });
-    
+
     // Mevcut öğrenci listesinden sil
     currentStudents.splice(currentStudentToDelete, 1);
-    
+
     // Tabloyu güncelle
     renderGradeTable();
-    
+
     // Modal'ı kapat
     const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteStudentModal'));
     if (deleteModal) {
         deleteModal.hide();
     }
-    
+
     // Bildirim göster
     showToast(`"${student.full_name}" öğrencisi başarıyla silindi.`);
-    
+
     // Silme işlemini sıfırla
     currentStudentToDelete = null;
-    
+
     debugLog(`Öğrenci silindi: ${student.full_name}`);
 }
 
@@ -693,26 +678,26 @@ function importStudentsToPerformanceTable(className) {
         console.error(`Sınıf bulunamadı: ${className}`);
         return;
     }
-    
+
     // Öğrencileri al
     const students = classesByName[className];
-    
+
     // Mevcut öğrencileri temizle
     currentStudents = [];
-    
+
     // Öğrencileri ekle
     students.forEach(student => {
         // Öğrenci adından numara kısmını ayır
         let fullName = `${student.first_name} ${student.last_name}`;
         let studentNo = student.student_no;
-        
+
         // Eğer ismin başında numara varsa, onu ayır
         const nameMatch = fullName.match(/^(\d+)\s+(.*)/);
         if (nameMatch) {
             studentNo = nameMatch[1];
             fullName = nameMatch[2];
         }
-        
+
         currentStudents.push({
             student_no: studentNo,
             full_name: fullName,
@@ -720,26 +705,83 @@ function importStudentsToPerformanceTable(className) {
             total: 0
         });
     });
-    
+
     // Not tablosunu oluştur
     renderGradeTable();
-    
+
     // Not dağılımı konteynerini göster
     document.getElementById('grading-container').classList.remove('d-none');
-    
+
     debugLog(`${className} sınıfındaki ${currentStudents.length} öğrenci not tablosuna aktarıldı`);
 }
 
 // Not tablosunu oluşturma
 function renderGradeTable() {
+    const table = document.getElementById('grade-table');
+    if (!table) return;
+
+    // 1. Header'ı güncelle
+    const headerRow = table.querySelector('thead tr');
+
+    // Mevcut kriter sütunlarını temizle
+    const existingCriteriaHeaders = headerRow.querySelectorAll('th.criteria-col');
+    existingCriteriaHeaders.forEach(th => th.remove());
+
+    // Toplam sütununu bul (referans noktası)
+    // Toplam sütunu sondan 2. sıradadır (İşlemler sütunundan önce)
+    // Ancak güvenli olmak için "Toplam" metnini içeren veya belirli bir ID/Class'a sahip olanı bulmak daha iyi olabilir
+    // Şimdilik sondan 2. mantığını kullanalım ama dikkatli olalım
+    let totalHeaderCell = null;
+    const headers = headerRow.querySelectorAll('th');
+
+    // "Toplam" başlığını bul
+    for (let i = 0; i < headers.length; i++) {
+        if (headers[i].textContent.trim() === 'Toplam') {
+            totalHeaderCell = headers[i];
+            break;
+        }
+    }
+
+    // Eğer Toplam başlığı bulunamazsa, sondan 2.yi al
+    if (!totalHeaderCell && headers.length >= 2) {
+        totalHeaderCell = headers[headers.length - 2];
+    }
+
+    // Yeni kriter sütunlarını ekle
+    if (totalHeaderCell) {
+        // displayNames dizisini kullanarak başlıkları oluştur
+        // displayNames yoksa criteriaNames kullan
+        const namesToUse = (typeof displayNames !== 'undefined' && displayNames.length === criteriaNames.length)
+            ? displayNames
+            : criteriaNames;
+
+        // Ters sırayla eklememek için fragment kullanalım veya insertBefore'u doğru kullanalım
+        // insertBefore referans düğümden ÖNCE ekler.
+        // Bu yüzden döngüyü normal sırayla çalıştırıp, her seferinde totalHeaderCell'den önce eklersek
+        // Soru 1, Soru 2... şeklinde eklenir.
+
+        // Ancak DOM manipülasyonunda her insertBefore işlemi referans noktasını değiştirmez,
+        // ama eklenen elemanlar sırayla sola doğru kaymaz, sağa doğru eklenir.
+        // Şöyle: [Soru 1] [Toplam] -> [Soru 1] [Soru 2] [Toplam]
+        // Bu yüzden normal döngü yeterli.
+
+        namesToUse.forEach(name => {
+            const th = document.createElement('th');
+            th.className = 'criteria-col';
+            th.textContent = name;
+            headerRow.insertBefore(th, totalHeaderCell);
+        });
+    }
+
+    // 2. Body'yi güncelle
     const tableBody = document.getElementById('grade-table-body');
     tableBody.innerHTML = '';
-    
+
     if (currentStudents.length === 0) {
         const emptyRow = document.createElement('tr');
         emptyRow.className = 'empty-table-message';
         emptyRow.innerHTML = `
-            <td colspan="14" class="text-center py-4">
+            <td colspan="${criteriaNames.length + 4}" class="text-center py-4">
                 <i class="bi bi-exclamation-circle text-muted fs-1 d-block mb-2"></i>
                 <span class="text-muted">Henüz öğrenci eklenmemiş. PDF'den yükleyin veya manuel olarak ekleyin.</span>
             </td>
@@ -747,21 +789,21 @@ function renderGradeTable() {
         tableBody.appendChild(emptyRow);
         return;
     }
-    
+
     currentStudents.forEach((student, index) => {
         const row = document.createElement('tr');
         row.dataset.index = index;
-        
+
         // Öğrenci No
         const cellNo = document.createElement('td');
         cellNo.textContent = student.student_no;
         row.appendChild(cellNo);
-        
+
         // Adı Soyadı
         const cellName = document.createElement('td');
         cellName.textContent = student.full_name;
         row.appendChild(cellName);
-        
+
         // Kriterler için hücreler
         for (let i = 0; i < criteriaNames.length; i++) {
             const cellCriteria = document.createElement('td');
@@ -770,17 +812,33 @@ function renderGradeTable() {
             input.type = 'number';
             input.className = 'form-control criteria-input';
             input.min = '0';
-            input.max = '10';
+            input.max = criteriaMaxScores[i]; // Dinamik max puan
             input.value = student.criteria[i] || 0;
             input.dataset.studentIndex = index;
             input.dataset.criteriaIndex = i;
-            input.addEventListener('change', function() {
+
+            // Focus olunca 0'ı sil
+            input.addEventListener('focus', function () {
+                if (this.value === '0') {
+                    this.value = '';
+                }
+            });
+
+            // Blur olunca boşsa 0 yap
+            input.addEventListener('blur', function () {
+                if (this.value === '') {
+                    this.value = '0';
+                    updateStudentGrade(this);
+                }
+            });
+
+            input.addEventListener('change', function () {
                 updateStudentGrade(this);
             });
             cellCriteria.appendChild(input);
             row.appendChild(cellCriteria);
         }
-        
+
         // Toplam
         const cellTotal = document.createElement('td');
         const totalInput = document.createElement('input');
@@ -791,14 +849,29 @@ function renderGradeTable() {
         totalInput.value = student.total;
         totalInput.dataset.studentIndex = index;
         totalInput.dataset.rowIndex = index;
-        totalInput.addEventListener('change', function() {
+        totalInput.addEventListener('change', function () {
             distributeGradeForStudent(this);
         });
-        
+
+        // Focus olunca 0'ı sil
+        totalInput.addEventListener('focus', function () {
+            if (this.value === '0') {
+                this.value = '';
+            }
+        });
+
+        // Blur olunca boşsa 0 yap
+        totalInput.addEventListener('blur', function () {
+            if (this.value === '') {
+                this.value = '0';
+                distributeGradeForStudent(this);
+            }
+        });
+
         // Toplam hücreleri arasında aşağı yukarı ok tuşlarıyla geçiş yapma özelliği
-        totalInput.addEventListener('keydown', function(e) {
+        totalInput.addEventListener('keydown', function (e) {
             const rowIndex = parseInt(this.dataset.rowIndex);
-            
+
             // Aşağı ok tuşu
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
@@ -810,7 +883,7 @@ function renderGradeTable() {
                     }
                 }
             }
-            
+
             // Yukarı ok tuşu
             if (e.key === 'ArrowUp') {
                 e.preventDefault();
@@ -823,10 +896,10 @@ function renderGradeTable() {
                 }
             }
         });
-        
+
         cellTotal.appendChild(totalInput);
         row.appendChild(cellTotal);
-        
+
         // İşlemler
         const cellActions = document.createElement('td');
 
@@ -847,10 +920,10 @@ function renderGradeTable() {
         cellActions.appendChild(deleteBtn);
 
         row.appendChild(cellActions);
-        
+
         tableBody.appendChild(row);
     });
-    
+
     debugLog("Not tablosu oluşturuldu");
 }
 
@@ -859,20 +932,32 @@ function updateStudentGrade(input) {
     const studentIndex = parseInt(input.dataset.studentIndex);
     const criteriaIndex = parseInt(input.dataset.criteriaIndex);
     const value = parseInt(input.value) || 0;
-    
+    const maxScore = criteriaMaxScores[criteriaIndex];
+
+    // Max puan kontrolü
+    let validValue = value;
+    if (validValue > maxScore) {
+        validValue = maxScore;
+        input.value = validValue;
+        showToast(`Bu soru için maksimum puan: ${maxScore}`);
+    } else if (validValue < 0) {
+        validValue = 0;
+        input.value = 0;
+    }
+
     // Notu güncelle
-    currentStudents[studentIndex].criteria[criteriaIndex] = value;
-    
+    currentStudents[studentIndex].criteria[criteriaIndex] = validValue;
+
     // Toplam notu hesapla
     const total = currentStudents[studentIndex].criteria.reduce((sum, grade) => sum + grade, 0);
     currentStudents[studentIndex].total = total;
-    
+
     // Toplam hücresini güncelle
     const totalInput = document.querySelector(`tr[data-index="${studentIndex}"] .total-input`);
     if (totalInput) {
         totalInput.value = total;
     }
-    
+
     debugLog(`Öğrenci notu güncellendi: ${studentIndex}, ${criteriaIndex}, ${value}`);
 }
 
@@ -880,17 +965,17 @@ function updateStudentGrade(input) {
 function distributeGradeForStudent(input) {
     const studentIndex = parseInt(input.dataset.studentIndex);
     const totalGrade = parseInt(input.value) || 0;
-    
+
     // Öğrenci nesnesini al
     const student = currentStudents[studentIndex];
     if (!student) return;
-    
+
     // Toplam notu güncelle
     student.total = totalGrade;
-    
+
     // Kriterlere notları dağıt
     distributeGradeToAllCriteria(student);
-    
+
     // Kriter inputlarını güncelle
     const criteriaInputs = document.querySelectorAll(`tr[data-index="${studentIndex}"] .criteria-input`);
     criteriaInputs.forEach((input, i) => {
@@ -898,7 +983,7 @@ function distributeGradeForStudent(input) {
             input.value = student.criteria[i];
         }
     });
-    
+
     debugLog(`Öğrenci ${studentIndex} için notlar dağıtıldı: toplam ${totalGrade}`);
 }
 
@@ -906,28 +991,178 @@ function distributeGradeForStudent(input) {
 function distributeGradeToAllCriteria(student) {
     const totalGrade = student.total;
     const criteriaCount = criteriaNames.length;
-    
+
     if (criteriaCount === 0) return;
-    
-    // Toplam notu 0, 5 ve 10 olarak dağıt
-    const baseValue = Math.floor(totalGrade / criteriaCount / 5) * 5; // 0, 5 veya 10 olabilir
-    const remainingPoints = totalGrade - (baseValue * criteriaCount);
-    
-    // Önce tüm kriterlere temel değeri ata
+
+    // Toplam maksimum puanı hesapla
+    const totalMaxScore = criteriaMaxScores.reduce((a, b) => a + b, 0);
+
+    if (totalMaxScore === 0) return;
+
+    // Dağıtılacak puan toplam max puandan büyükse sınırla
+    const distributeScore = Math.min(totalGrade, totalMaxScore);
+
+    // 1. ADIM: Temel Dağıtım (Ağırlıklı)
+    let distributedTotal = 0;
+    const minScorePerQuestion = 5;
+
+    // Toplam puan, her soruya 5 puan vermeye yetiyor mu kontrol et
+    // Ayrıca her sorunun max puanının en az 5 olduğunu varsayıyoruz (değilse kendi max'ı kadar)
+    let requiredForMin = 0;
     for (let i = 0; i < criteriaCount; i++) {
-        student.criteria[i] = baseValue;
+        requiredForMin += Math.min(minScorePerQuestion, criteriaMaxScores[i]);
     }
-    
-    // Kalan puanları 5'er 5'er dağıt
-    let remaining = remainingPoints;
+
+    const canAffordMin = distributeScore >= requiredForMin;
+
+    if (canAffordMin) {
+        // Yeterli puan varsa, önce minimumları dağıt
+        for (let i = 0; i < criteriaCount; i++) {
+            const baseScore = Math.min(minScorePerQuestion, criteriaMaxScores[i]);
+            student.criteria[i] = baseScore;
+            distributedTotal += baseScore;
+        }
+
+        // Kalan puanı ağırlıklı olarak dağıt
+        const remainingToDistribute = distributeScore - distributedTotal;
+        const totalCapacity = totalMaxScore - distributedTotal; // Kalan kapasite
+
+        if (totalCapacity > 0) {
+            for (let i = 0; i < criteriaCount; i++) {
+                const currentScore = student.criteria[i];
+                const maxScore = criteriaMaxScores[i];
+                const capacity = maxScore - currentScore;
+
+                if (capacity > 0) {
+                    // Kalan puanı kapasiteye göre oranla
+                    let extraScore = Math.floor((capacity / totalCapacity) * remainingToDistribute);
+                    student.criteria[i] += extraScore;
+                    distributedTotal += extraScore;
+                }
+            }
+        }
+    } else {
+        // Yeterli puan yoksa (toplam puan < her soruya 5 puan), az sayıda soruya dağıt
+
+        // Eğer toplam puan 5'ten küçükse, hepsini rastgele bir soruya ver
+        if (distributeScore < minScorePerQuestion) {
+            const randomIndex = Math.floor(Math.random() * criteriaCount);
+            student.criteria[randomIndex] = distributeScore;
+            distributedTotal = distributeScore;
+        } else {
+            // Puanı kaç tane soruya 5'er puan olarak dağıtabiliriz?
+            const possibleQuestionsCount = Math.floor(distributeScore / minScorePerQuestion);
+
+            // Rastgele bu kadar soru seç
+            let selectedIndices = [];
+            const availableIndices = Array.from({ length: criteriaCount }, (_, i) => i);
+
+            for (let i = 0; i < possibleQuestionsCount; i++) {
+                if (availableIndices.length === 0) break;
+                const randPos = Math.floor(Math.random() * availableIndices.length);
+                selectedIndices.push(availableIndices[randPos]);
+                availableIndices.splice(randPos, 1);
+            }
+
+            // Seçilen sorulara önce 5'er puan ver
+            selectedIndices.forEach(index => {
+                student.criteria[index] = minScorePerQuestion;
+                distributedTotal += minScorePerQuestion;
+            });
+
+            // Kalan puanı bu seçilen sorulara dağıt
+            let remaining = distributeScore - distributedTotal;
+
+            // Kalan puanları seçilen sorulara dağıt
+            while (remaining > 0) {
+                // Sadece seçilen sorulardan kapasitesi olanları bul
+                const candidates = selectedIndices.filter(idx => student.criteria[idx] < criteriaMaxScores[idx]);
+
+                if (candidates.length === 0) break; // Hiçbirine daha fazla puan verilemiyor
+
+                const randIdx = candidates[Math.floor(Math.random() * candidates.length)];
+                student.criteria[randIdx]++;
+                remaining--;
+                distributedTotal++;
+            }
+        }
+
+        // Düşük puanlarda (sparse distribution) varyasyon ve diğer adımları atla
+        // Çünkü bu adımlar minimum 5 puan kuralını bozabilir
+        debugLog(`Düşük puan dağıtımı tamamlandı: ${distributeScore}`);
+        return;
+    }
+
+    // 2. ADIM: Kalan Puanları Rastgele Dağıt
+    let remaining = distributeScore - distributedTotal;
+
+    // Kalan puanları rastgele dağıt (sırayla değil)
+    let attempts = 0;
+    while (remaining > 0 && attempts < criteriaCount * 5) {
+        const randomIndex = Math.floor(Math.random() * criteriaCount);
+        if (student.criteria[randomIndex] < criteriaMaxScores[randomIndex]) {
+            student.criteria[randomIndex]++;
+            remaining--;
+        }
+        attempts++;
+    }
+
+    // Eğer hala kalan varsa (random denemeler yetmediyse), sırayla dağıt
     let i = 0;
-    while (remaining >= 5 && i < criteriaCount) {
-        student.criteria[i] += 5;
-        remaining -= 5;
+    while (remaining > 0 && i < criteriaCount * 2) {
+        const index = i % criteriaCount;
+        if (student.criteria[index] < criteriaMaxScores[index]) {
+            student.criteria[index]++;
+            remaining--;
+        }
         i++;
     }
-    
-    debugLog(`Toplam not dağıtıldı: ${totalGrade}, Temel Değer: ${baseValue}, Kalan: ${remainingPoints}`);
+
+    // 3. ADIM: Çeşitlendirme (Variation)
+    // Puanları birbirine yaklaştırıp uzaklaştırarak çeşitlilik sağla
+    // Rastgele iki soru seç, birinden al diğerine ver (limitler dahilinde)
+    const variationAttempts = criteriaCount * 2;
+    for (let k = 0; k < variationAttempts; k++) {
+        const idx1 = Math.floor(Math.random() * criteriaCount);
+        const idx2 = Math.floor(Math.random() * criteriaCount);
+
+        if (idx1 === idx2) continue;
+
+        // Rastgele 1-2 puan transfer etmeyi dene
+        const transferAmount = Math.floor(Math.random() * 2) + 1;
+
+        // Transfer yaparken kaynak puanın 5'in altına düşmemesini sağla (eğer 0 değilse)
+        // Hedef puanın da max puanı geçmemesini sağla
+        if (student.criteria[idx1] - transferAmount >= 5 &&
+            student.criteria[idx2] + transferAmount <= criteriaMaxScores[idx2]) {
+
+            student.criteria[idx1] -= transferAmount;
+            student.criteria[idx2] += transferAmount;
+        }
+    }
+
+    // 4. ADIM: Ardışık Aynı Puanları Engelleme (Consecutive Fix)
+    // Yan yana aynı puanlar varsa, birinden alıp diğerine vererek bozmaya çalış
+    for (let k = 0; k < criteriaCount - 1; k++) {
+        if (student.criteria[k] === student.criteria[k + 1]) {
+            // Eğer puanlar aynıysa, birini azaltıp diğerini artırmayı dene
+
+            // Durum 1: k'dan al, k+1'e ver
+            // k'nın puanı 5'in altına düşmemeli
+            if (student.criteria[k] - 1 >= 5 && student.criteria[k + 1] < criteriaMaxScores[k + 1]) {
+                student.criteria[k]--;
+                student.criteria[k + 1]++;
+            }
+            // Durum 2: k+1'den al, k'ya ver
+            // k+1'in puanı 5'in altına düşmemeli
+            else if (student.criteria[k + 1] - 1 >= 5 && student.criteria[k] < criteriaMaxScores[k]) {
+                student.criteria[k + 1]--;
+                student.criteria[k]++;
+            }
+        }
+    }
+
+    debugLog(`Toplam not dağıtıldı (Çeşitlendirilmiş): ${distributeScore}, Max Toplam: ${totalMaxScore}`);
 }
 
 // Notları analiz etme
@@ -936,14 +1171,14 @@ function analyzeGrades() {
         alert('Analiz için öğrenci verisi bulunamadı.');
         return;
     }
-    
+
     // Analiz verilerini hesapla
     analysisData = calculateAnalysisData();
-    
+
     // Analiz modalını göster
     const analysisModal = document.getElementById('analysisModal');
     const analysisContent = document.getElementById('analysis-content');
-    
+
     // Analiz içeriğini temizle ve mesaj göster
     analysisContent.innerHTML = `
         <div class="alert alert-success text-center">
@@ -952,14 +1187,14 @@ function analyzeGrades() {
             <p class="mb-0">Lütfen yazdır butonuna tıklayarak analiz sonuçlarını görüntüleyiniz.</p>
         </div>
     `;
-    
+
     // Modalı göster
     const modal = new bootstrap.Modal(analysisModal);
     modal.show();
-    
+
     // Bildirim göster
     showToast('Analiz başarıyla tamamlandı.');
-    
+
     debugLog("Analiz tamamlandı");
 }
 
@@ -989,38 +1224,38 @@ function calculateAnalysisData() {
         answerPercentage: Array(criteriaNames.length).fill(0), // Sorunun cevaplanma yüzdesi
         topicAnalysis: Array(criteriaNames.length).fill('') // Konu analizi (Anlaşılmış/Anlaşılmamış)
     };
-    
+
     // Toplam notları hesapla
     let totalGradeSum = 0;
-    
+
     currentStudents.forEach(student => {
         // Toplam not
         totalGradeSum += student.total;
-        
+
         // En yüksek ve en düşük toplam not
         if (student.total > data.highestTotalGrade) {
             data.highestTotalGrade = student.total;
             data.bestStudent = student;
         }
-        
+
         if (student.total < data.lowestTotalGrade) {
             data.lowestTotalGrade = student.total;
             data.weakestStudent = student;
         }
-        
+
         // Her kriter için en yüksek, en düşük ve toplam notlar
         student.criteria.forEach((grade, index) => {
             if (index < criteriaNames.length) {
                 data.averageGrades[index] += grade;
-                
+
                 if (grade > data.highestGrades[index]) {
                     data.highestGrades[index] = grade;
                 }
-                
+
                 if (grade < data.lowestGrades[index]) {
                     data.lowestGrades[index] = grade;
                 }
-                
+
                 // Soruya cevap veren/vermeyen öğrenci sayısını hesapla
                 if (grade > 0) {
                     data.answeredStudentCount[index]++;
@@ -1029,7 +1264,7 @@ function calculateAnalysisData() {
                 }
             }
         });
-        
+
         // Not dağılımı
         if (student.total >= 85) {
             data.gradeDistribution.excellent++;
@@ -1043,20 +1278,20 @@ function calculateAnalysisData() {
             data.gradeDistribution.poor++;
         }
     });
-    
+
     // Ortalama notları hesapla
     if (data.totalStudents > 0) {
         data.totalAverageGrade = Math.round(totalGradeSum / data.totalStudents * 10) / 10;
-        
-        data.averageGrades = data.averageGrades.map(sum => 
+
+        data.averageGrades = data.averageGrades.map(sum =>
             Math.round((sum / data.totalStudents) * 10) / 10
         );
-        
+
         // Sorunun cevaplanma yüzdesini hesapla
-        data.answerPercentage = data.answeredStudentCount.map(count => 
+        data.answerPercentage = data.answeredStudentCount.map(count =>
             Math.round((count / data.totalStudents) * 100)
         );
-        
+
         // Konu analizi (Anlaşılmış/Anlaşılmamış)
         data.topicAnalysis = data.answerPercentage.map(percentage => {
             if (percentage >= 70) {
@@ -1066,25 +1301,25 @@ function calculateAnalysisData() {
             }
         });
     }
-    
+
     // Kriter performans yüzdelerini hesapla
     const maxPossibleGrade = 10; // Her kriter için maksimum 10 puan
-    
-    data.criteriaPerformance = data.averageGrades.map(avg => 
+
+    data.criteriaPerformance = data.averageGrades.map(avg =>
         Math.round((avg / maxPossibleGrade) * 100)
     );
-    
+
     // En iyi ve en kötü öğrenci yoksa (tüm notlar 0 ise) varsayılan değerler ata
     if (!data.bestStudent && currentStudents.length > 0) {
         data.bestStudent = currentStudents[0];
     }
-    
+
     if (!data.weakestStudent && currentStudents.length > 0) {
         data.weakestStudent = currentStudents[0];
     }
-    
+
     debugLog("Analiz verileri hesaplandı:", data);
-    
+
     return data;
 }
 
@@ -1092,7 +1327,7 @@ function calculateAnalysisData() {
 function renderAnalysis(data) {
     const analysisContent = document.getElementById('analysis-content');
     analysisContent.innerHTML = '';
-    
+
     // Genel bilgiler
     const generalSection = document.createElement('div');
     generalSection.className = 'analysis-section';
@@ -1148,7 +1383,7 @@ function renderAnalysis(data) {
         </div>
     `;
     analysisContent.appendChild(generalSection);
-    
+
     // Not dağılımı
     const distributionSection = document.createElement('div');
     distributionSection.className = 'analysis-section';
@@ -1201,7 +1436,7 @@ function renderAnalysis(data) {
         </div>
     `;
     analysisContent.appendChild(distributionSection);
-    
+
     // Kriter bazlı performans
     const criteriaSection = document.createElement('div');
     criteriaSection.className = 'analysis-section';
@@ -1251,15 +1486,15 @@ function renderAnalysis(data) {
         </div>
     `;
     analysisContent.appendChild(criteriaSection);
-    
+
     // Öğrenci performans analizi
     const studentAnalysisSection = document.createElement('div');
     studentAnalysisSection.className = 'analysis-section';
-    
+
     // En iyi ve en kötü öğrenci bilgilerini kontrol et
     const bestStudentInfo = data.bestStudent ? `<strong>${data.bestStudent.full_name}</strong> (${data.highestTotalGrade} puan)` : "Veri yok";
     const weakestStudentInfo = data.weakestStudent ? `<strong>${data.weakestStudent.full_name}</strong> (${data.lowestTotalGrade} puan)` : "Veri yok";
-    
+
     studentAnalysisSection.innerHTML = `
         <h3 class="analysis-title"><i class="bi bi-people me-2"></i>Öğrenci Performans Analizi</h3>
         <div class="row">
@@ -1282,25 +1517,25 @@ function renderAnalysis(data) {
         </div>
     `;
     analysisContent.appendChild(studentAnalysisSection);
-    
+
     // Grafikleri oluştur
     setTimeout(() => {
         createGradeDistributionChart(data);
         createCriteriaPerformanceChart(data);
     }, 300);
-    
+
     debugLog("Analiz içeriği oluşturuldu");
 }
 
 // Not dağılımı grafiği oluşturma
 function createGradeDistributionChart(data) {
     const ctx = document.getElementById('grade-distribution-chart').getContext('2d');
-    
+
     // Eğer önceden bir grafik varsa yok et
     if (window.gradeDistributionChart) {
         window.gradeDistributionChart.destroy();
     }
-    
+
     window.gradeDistributionChart = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -1331,19 +1566,19 @@ function createGradeDistributionChart(data) {
             }
         }
     });
-    
+
     debugLog("Not dağılımı grafiği oluşturuldu");
 }
 
 // Kriter performans grafiği oluşturma
 function createCriteriaPerformanceChart(data) {
     const ctx = document.getElementById('criteria-performance-chart').getContext('2d');
-    
+
     // Eğer önceden bir grafik varsa yok et
     if (window.criteriaPerformanceChart) {
         window.criteriaPerformanceChart.destroy();
     }
-    
+
     window.criteriaPerformanceChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -1370,7 +1605,7 @@ function createCriteriaPerformanceChart(data) {
             }
         }
     });
-    
+
     debugLog("Kriter performans grafiği oluşturuldu");
 }
 
@@ -1416,17 +1651,17 @@ function getRecommendations(data) {
     if (data.totalStudents === 0 || data.totalAverageGrade === 0) {
         return "Henüz yeterli veri bulunmamaktadır. Öğrenci ekleyip notları dağıttıktan sonra daha detaylı öneriler alabilirsiniz.";
     }
-    
+
     let recommendations = '';
-    
+
     // En düşük performanslı kriterleri bul
     const lowestCriteriaIndex = data.averageGrades.indexOf(Math.min(...data.averageGrades));
     const lowestCriteriaAvg = data.averageGrades[lowestCriteriaIndex];
-    
+
     // En yüksek performanslı kriterleri bul
     const highestCriteriaIndex = data.averageGrades.indexOf(Math.max(...data.averageGrades));
     const highestCriteriaAvg = data.averageGrades[highestCriteriaIndex];
-    
+
     // Genel performansa göre öneriler
     if (data.totalAverageGrade < 55) {
         recommendations += 'Sınıfın genel performansı düşük seviyededir. Temel konuların tekrar edilmesi ve ek çalışmalar yapılması önerilir. ';
@@ -1435,11 +1670,11 @@ function getRecommendations(data) {
     } else {
         recommendations += 'Sınıfın genel performansı iyi seviyededir. Daha ileri seviye konulara geçilebilir ve mevcut bilgilerin pekiştirilmesi sağlanabilir. ';
     }
-    
+
     // Kriter bazlı öneriler
     recommendations += `${criteriaNames[lowestCriteriaIndex]} en düşük performans gösterilen kriterdir (ortalama: ${lowestCriteriaAvg}). Bu konuda ek çalışmalar yapılması önerilir. `;
     recommendations += `${criteriaNames[highestCriteriaIndex]} en yüksek performans gösterilen kriterdir (ortalama: ${highestCriteriaAvg}). Bu alandaki başarı diğer kriterlere de yansıtılabilir.`;
-    
+
     return recommendations;
 }
 
@@ -1449,7 +1684,7 @@ function preparePrint() {
         alert('Yazdırma için öğrenci verisi bulunamadı.');
         return;
     }
-    
+
     // Eğer analiz yapılmamışsa, önce analiz yap
     if (!analysisData) {
         analyzeGrades();
@@ -1457,7 +1692,7 @@ function preparePrint() {
         setTimeout(preparePrintAfterAnalysis, 500);
         return;
     }
-    
+
     preparePrintAfterAnalysis();
 }
 
@@ -1467,17 +1702,17 @@ function preparePrintAfterAnalysis() {
     const printDate = printArea.querySelector('.print-date');
     const printTable = printArea.querySelector('.print-table');
     const printAnalysis = printArea.querySelector('.print-analysis');
-    
+
     // Tarih ve başlık bilgileri
     const now = new Date();
-    const formattedDate = now.toLocaleDateString('tr-TR', { 
-        year: 'numeric', 
-        month: 'long', 
+    const formattedDate = now.toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     });
-    
+
     // Sınıf adını bul - daha esnek eşleştirme
     let className = "Belirtilmemiş Sınıf";
 
@@ -1508,13 +1743,13 @@ function preparePrintAfterAnalysis() {
             className = Object.keys(classesByName)[0];
         }
     }
-    
+
     // Okul bilgilerini hazırla
     const schoolNameText = schoolInfo.schoolName ? schoolInfo.schoolName : "Okul Adı";
     const courseNameText = schoolInfo.courseName ? schoolInfo.courseName : "Ders Adı";
     const examPeriodText = schoolInfo.examPeriod ? schoolInfo.examPeriod : "Sınav Dönemi";
     const teacherNameText = schoolInfo.teacherName ? schoolInfo.teacherName : "Öğretmen Adı";
-    
+
     // Üst bilgi
     printDate.innerHTML = `
         <div class="print-header-content">
@@ -1532,7 +1767,7 @@ function preparePrintAfterAnalysis() {
         </div>
         <div class="print-header-border"></div>
     `;
-    
+
     // Özet bilgiler
     let summaryHTML = '';
     if (analysisData) {
@@ -1561,7 +1796,7 @@ function preparePrintAfterAnalysis() {
             </div>
         `;
     }
-    
+
     // Tablo - Öğrenci no, ad soyad, kriter notları ve toplam notu göster
     printTable.innerHTML = `
         <div class="print-section">
@@ -1593,13 +1828,13 @@ function preparePrintAfterAnalysis() {
             </table>
         </div>
     `;
-    
+
     // Analiz
     if (analysisData) {
         // En iyi ve en kötü öğrenci bilgilerini kontrol et
         const bestStudentInfo = analysisData.bestStudent ? `${analysisData.bestStudent.full_name} (${analysisData.highestTotalGrade} puan)` : "Veri yok";
         const weakestStudentInfo = analysisData.weakestStudent ? `${analysisData.weakestStudent.full_name} (${analysisData.lowestTotalGrade} puan)` : "Veri yok";
-        
+
         // Kriter performans tablosu
         const criteriaTableRows = analysisData.averageGrades.map((avg, index) => `
             <tr>
@@ -1617,7 +1852,7 @@ function preparePrintAfterAnalysis() {
                 </td>
             </tr>
         `).join('');
-        
+
         // Not dağılımı tablosu
         const distributionTable = `
             <table class="print-distribution-table">
@@ -1657,7 +1892,7 @@ function preparePrintAfterAnalysis() {
                 </tbody>
             </table>
         `;
-        
+
         // Öğrenci başarı sıralaması
         const sortedStudents = [...currentStudents].sort((a, b) => b.total - a.total);
         const topStudentsRows = sortedStudents.slice(0, 5).map((student, index) => `
@@ -1668,7 +1903,7 @@ function preparePrintAfterAnalysis() {
                 <td class="${getGradeColorClass(student.total, 100)}">${student.total}</td>
             </tr>
         `).join('');
-        
+
         // Detaylı analiz
         printAnalysis.innerHTML = `
             <div class="print-section">
@@ -1833,7 +2068,7 @@ function preparePrintAfterAnalysis() {
                 </div>
             </div>
         `;
-        
+
         // Grafikleri SVG olarak hazırla
         renderPrintCharts(analysisData);
     } else {
@@ -1844,7 +2079,7 @@ function preparePrintAfterAnalysis() {
             </div>
         `;
     }
-    
+
     // Öğretmen imza alanı
     const printFooter = printArea.querySelector('.print-teacher-signature');
     const teacherName = schoolInfo.teacherName || "Öğretmen Adı Soyadı";
@@ -1869,7 +2104,7 @@ function preparePrintAfterAnalysis() {
 function renderPrintCharts(data) {
     // Not dağılımı grafiği (SVG olarak)
     const distributionChartSvg = document.getElementById('print-distribution-chart-svg');
-    
+
     // SVG oluştur
     const svgContent = `
     <svg width="200" height="150" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
@@ -1895,9 +2130,9 @@ function renderPrintCharts(data) {
         </g>
     </svg>
     `;
-    
+
     distributionChartSvg.innerHTML = svgContent;
-    
+
     debugLog("Yazdırma için grafikler hazırlandı");
 }
 
@@ -1910,49 +2145,49 @@ function renderPieChart(data) {
         data.gradeDistribution.belowAverage,
         data.gradeDistribution.poor
     ];
-    
+
     const colors = ['#28a745', '#17a2b8', '#ffc107', '#fd7e14', '#dc3545'];
-    
+
     // Toplam öğrenci sayısı
     const total = values.reduce((sum, val) => sum + val, 0);
-    
+
     // Eğer öğrenci yoksa boş bir daire göster
     if (total === 0) {
         return `<circle cx="70" cy="70" r="50" fill="#f0f0f0" stroke="#ccc" stroke-width="1" />`;
     }
-    
+
     // Pasta dilimlerini oluştur
     let paths = '';
     let startAngle = 0;
-    
+
     values.forEach((value, index) => {
         if (value === 0) return;
-        
+
         const percentage = value / total;
         const endAngle = startAngle + percentage * 2 * Math.PI;
-        
+
         // SVG path için koordinatları hesapla
         const startX = 70 + 50 * Math.cos(startAngle);
         const startY = 70 + 50 * Math.sin(startAngle);
         const endX = 70 + 50 * Math.cos(endAngle);
         const endY = 70 + 50 * Math.sin(endAngle);
-        
+
         // Büyük yay bayrağı (1 = büyük yay, 0 = küçük yay)
         const largeArcFlag = percentage > 0.5 ? 1 : 0;
-        
+
         // Path oluştur
         paths += `<path d="M 70 70 L ${startX} ${startY} A 50 50 0 ${largeArcFlag} 1 ${endX} ${endY} Z" fill="${colors[index]}" />`;
-        
+
         startAngle = endAngle;
     });
-    
+
     return paths;
 }
 
 // Not renk sınıfı
 function getGradeColorClass(grade, maxGrade) {
     const percentage = (grade / maxGrade) * 100;
-    
+
     if (percentage >= 85) return 'grade-excellent';
     if (percentage >= 70) return 'grade-good';
     if (percentage >= 55) return 'grade-average';
@@ -1975,10 +2210,10 @@ function getDetailedRecommendations(data) {
     if (data.totalStudents === 0 || data.totalAverageGrade === 0) {
         return "<p>Henüz yeterli veri bulunmamaktadır.</p>";
     }
-    
+
     let performanceLevel = '';
     let recommendations = '';
-    
+
     // Performans seviyesine göre başlık ve öneriler
     if (data.totalAverageGrade >= 85) {
         performanceLevel = 'Mükemmel Performans';
@@ -2031,7 +2266,7 @@ function getDetailedRecommendations(data) {
             </ul>
         `;
     }
-    
+
     return `
         <h5>${performanceLevel}</h5>
         ${recommendations}
@@ -2044,11 +2279,11 @@ function generateCriteriaAnalysis(data, criteriaNames) {
     if (data.totalStudents === 0 || data.totalAverageGrade === 0) {
         return "<p>Henüz yeterli veri bulunmamaktadır.</p>";
     }
-    
+
     // En düşük ve en yüksek performanslı kriterleri bul
     const lowestCriteriaIndex = data.averageGrades.indexOf(Math.min(...data.averageGrades));
     const highestCriteriaIndex = data.averageGrades.indexOf(Math.max(...data.averageGrades));
-    
+
     return `
         <div class="print-criteria-analysis-content">
             <div class="criteria-analysis-item">
@@ -2074,9 +2309,9 @@ function generateGeneralConclusion(data) {
     if (data.totalStudents === 0 || data.totalAverageGrade === 0) {
         return "<p>Henüz yeterli veri bulunmamaktadır.</p>";
     }
-    
+
     let conclusion = '';
-    
+
     if (data.totalAverageGrade >= 85) {
         conclusion = `
             <p>Sınıfın genel performansı mükemmel seviyededir. Öğrencilerin çoğunluğu konuları iyi düzeyde kavramış ve uygulayabilmektedir. 
@@ -2104,7 +2339,7 @@ function generateGeneralConclusion(data) {
             Temel kavramların yeniden ele alınması ve kapsamlı bir tekrar programı uygulanması gerekmektedir.</p>
         `;
     }
-    
+
     return conclusion;
 }
 
@@ -2114,12 +2349,12 @@ function generateSuggestions(data, criteriaNames) {
     if (data.totalStudents === 0 || data.totalAverageGrade === 0) {
         return "<p>Henüz yeterli veri bulunmamaktadır.</p>";
     }
-    
+
     // En düşük performanslı kriterleri bul
     const lowestCriteriaIndex = data.averageGrades.indexOf(Math.min(...data.averageGrades));
-    
+
     let suggestions = '';
-    
+
     if (data.totalAverageGrade < 55) {
         suggestions = `
             <p>Sınıfın genel performansını artırmak için öneriler:</p>
@@ -2154,7 +2389,7 @@ function generateSuggestions(data, criteriaNames) {
             </ul>
         `;
     }
-    
+
     return suggestions;
 }
 
@@ -2162,13 +2397,13 @@ function generateSuggestions(data, criteriaNames) {
 // Medyan hesaplama
 function calculateMedian(values) {
     if (values.length === 0) return 0;
-    
+
     // Değerleri sırala
     const sorted = [...values].sort((a, b) => a - b);
-    
+
     // Ortadaki değeri bul
     const middle = Math.floor(sorted.length / 2);
-    
+
     if (sorted.length % 2 === 0) {
         // Çift sayıda eleman varsa, ortadaki iki değerin ortalamasını al
         return (sorted[middle - 1] + sorted[middle]) / 2;
@@ -2181,14 +2416,14 @@ function calculateMedian(values) {
 // Standart sapma hesaplama
 function calculateStandardDeviation(values) {
     if (values.length === 0) return 0;
-    
+
     // Ortalama hesapla
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    
+
     // Kareler toplamı
     const squaredDifferences = values.map(val => Math.pow(val - mean, 2));
     const sumSquaredDiff = squaredDifferences.reduce((sum, val) => sum + val, 0);
-    
+
     // Standart sapma
     return Math.sqrt(sumSquaredDiff / values.length);
 }
@@ -2196,14 +2431,14 @@ function calculateStandardDeviation(values) {
 // Varyans hesaplama
 function calculateVariance(values) {
     if (values.length === 0) return 0;
-    
+
     // Ortalama hesapla
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    
+
     // Kareler toplamı
     const squaredDifferences = values.map(val => Math.pow(val - mean, 2));
     const sumSquaredDiff = squaredDifferences.reduce((sum, val) => sum + val, 0);
-    
+
     // Varyans
     return sumSquaredDiff / values.length;
 }
@@ -2211,53 +2446,53 @@ function calculateVariance(values) {
 // Mod hesaplama
 function calculateMode(values) {
     if (values.length === 0) return 0;
-    
+
     // Değerlerin frekansını hesapla
     const frequency = {};
     values.forEach(val => {
         frequency[val] = (frequency[val] || 0) + 1;
     });
-    
+
     // En sık tekrar eden değeri bul
     let maxFreq = 0;
     let mode = 0;
-    
+
     for (const val in frequency) {
         if (frequency[val] > maxFreq) {
             maxFreq = frequency[val];
             mode = val;
         }
     }
-    
+
     return mode;
 }
 
 // Çarpıklık hesaplama
 function calculateSkewness(values) {
     if (values.length === 0) return 0;
-    
+
     // Ortalama hesapla
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    
+
     // Standart sapma hesapla
     const stdDev = calculateStandardDeviation(values);
-    
+
     if (stdDev === 0) return 0;
-    
+
     // Çarpıklık hesapla
     const cubedDifferences = values.map(val => Math.pow((val - mean) / stdDev, 3));
     const sumCubedDiff = cubedDifferences.reduce((sum, val) => sum + val, 0);
-    
+
     return sumCubedDiff / values.length;
 }
 
 // Başarı oranı hesaplama
 function calculateSuccessRate(values, threshold) {
     if (values.length === 0) return 0;
-    
+
     // Eşik değerini geçen öğrenci sayısı
     const successCount = values.filter(val => val >= threshold).length;
-    
+
     // Başarı oranı
     return (successCount / values.length) * 100;
 }
@@ -2266,17 +2501,17 @@ function calculateSuccessRate(values, threshold) {
 function showToast(message) {
     // Toast container'ı kontrol et
     let toastContainer = document.getElementById('toast-container');
-    
+
     if (!toastContainer) {
         toastContainer = document.createElement('div');
         toastContainer.id = 'toast-container';
         toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
         document.body.appendChild(toastContainer);
     }
-    
+
     // Toast ID'si oluştur
     const toastId = 'toast-' + Date.now();
-    
+
     // Toast HTML'i
     const toastHtml = `
         <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -2291,15 +2526,15 @@ function showToast(message) {
             </div>
         </div>
     `;
-    
+
     // Toast'u container'a ekle
     toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-    
+
     // Toast'u göster
     const toastElement = document.getElementById(toastId);
     const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
     toast.show();
-    
+
     // Belirli bir süre sonra toast'u kaldır
     setTimeout(() => {
         toastElement.remove();
