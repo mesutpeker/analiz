@@ -65,8 +65,131 @@ document.addEventListener('DOMContentLoaded', function () {
     // Kriter başlıklarını güncelle
     updateCriteriaHeaders();
 
+    // Metin işleme butonu
+    document.getElementById('process-text-btn').addEventListener('click', processImportText);
+
     debugLog("Uygulama başlatıldı");
 });
+
+// Metin verisini işleme
+function processImportText() {
+    const text = document.getElementById('import-text').value;
+    const classNameInput = document.getElementById('import-class-name').value.trim();
+
+    if (!classNameInput) {
+        alert('Lütfen bir sınıf adı girin.');
+        return;
+    }
+
+    if (!text.trim()) {
+        alert('Lütfen metin girin.');
+        return;
+    }
+
+    const lines = text.split('\n');
+    const students = [];
+    let currentStudent = null;
+
+    // Regex desenleri
+    const studentLineRegex = /^(\d+)\s+(.+?)\s*$/; // 322 MEHDİ İŞLETEN
+    const gradeLineRegex = /^\s*(\d+|G)\s+(\d+|G)\s+(\d+|G)\s+/; // 30 65 10 ... veya G G G ...
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Öğrenci satırı mı? (Sadece sayı ile başlıyorsa ve devamında isim varsa)
+        // Ancak "30 65 10" gibi not satırlarını karıştırmamak lazım.
+        // İsim satırı genellikle sayı + kelimelerden oluşur. Not satırı sayılarla devam eder.
+
+        // Basit bir kontrol: Satır bir sayı ile başlıyor mu?
+        const matchStudent = line.match(/^(\d+)\t(.+)$/) || line.match(/^(\d+)\s+([^\d]+.*)$/);
+
+        if (matchStudent) {
+            // Eğer önceki satır not satırı değilse ve bu satır bir not satırı gibi görünmüyorsa
+            // Not satırı kontrolü: Sayıdan sonra hemen başka bir sayı veya G geliyorsa bu not satırıdır.
+            const isGradeLine = /^\d+\s+(\d+|G)/.test(line);
+
+            if (!isGradeLine) {
+                const studentNo = matchStudent[1];
+                const fullName = matchStudent[2].trim();
+
+                // "Öğrenci Not Bilgisi" satırlarını yoksay
+                if (fullName.includes("Öğrenci Not Bilgisi")) {
+                    continue;
+                }
+
+                currentStudent = {
+                    student_no: studentNo,
+                    first_name: fullName.split(' ')[0],
+                    last_name: fullName.split(' ').slice(1).join(' '),
+                    y1_score: 0 // Varsayılan
+                };
+                students.push(currentStudent);
+                continue;
+            }
+        }
+
+        // Not satırı mı?
+        // Genellikle "Y D K Ort." satırından sonra gelir
+        // Veya doğrudan notlar: "30 65 10 32,25"
+        // Veya yeni format: "50" (tek satır)
+        if (currentStudent) {
+            // "Öğrenci Not Bilgisi" satırlarını grade olarak işlememek için kontrol
+            // (Bazı formatlarda bu satır sayıyla başlayabilir)
+            if (line.includes("Öğrenci Not Bilgisi")) {
+                continue;
+            }
+
+            // Satırın başında sayı veya G var mı?
+            // ^(\d+|G) -> Satır başı sayı veya G
+            // (?:\s|$) -> Devamında boşluk veya satır sonu (tek değer için)
+            const gradeMatch = line.match(/^(\d+|G)(?:\s|$)/);
+
+            if (gradeMatch) {
+                let y1 = gradeMatch[1];
+                if (y1 === 'G') {
+                    y1 = 0;
+                } else {
+                    y1 = parseInt(y1);
+                }
+
+                // Eğer mantıklı bir not ise (0-100 arası)
+                if (!isNaN(y1) && y1 >= 0 && y1 <= 100) {
+                    currentStudent.y1_score = y1;
+                    currentStudent = null; // Bu öğrenci tamamlandı
+                }
+            }
+        }
+    }
+
+    if (students.length === 0) {
+        alert('Metin içinde öğrenci verisi bulunamadı. Lütfen formatı kontrol edin.');
+        return;
+    }
+
+    // Yeni bir sınıf oluştur
+    classesByName[classNameInput] = students;
+
+    // Modal'ı kapat
+    const modal = bootstrap.Modal.getInstance(document.getElementById('textImportModal'));
+    if (modal) {
+        modal.hide();
+    }
+
+    // Form alanlarını temizle
+    document.getElementById('import-text').value = '';
+    document.getElementById('import-class-name').value = '';
+
+    // Sınıf listesini güncelle
+    updateStudentClassSelect();
+
+    // Tabloya aktar
+    importStudentsToPerformanceTable(classNameInput);
+
+    showToast(`${students.length} öğrenci başarıyla içe aktarıldı.`);
+    debugLog(`${students.length} öğrenci metinden içe aktarıldı.`);
+}
 
 // Okul bilgilerini güncelleme
 function updateSchoolInfo(event) {
@@ -698,12 +821,22 @@ function importStudentsToPerformanceTable(className) {
             fullName = nameMatch[2];
         }
 
-        currentStudents.push({
+        // Y1 notunu al (varsa)
+        const totalScore = student.y1_score || 0;
+
+        const newStudent = {
             student_no: studentNo,
             full_name: fullName,
             criteria: Array(currentCriteriaCount).fill(0),
-            total: 0
-        });
+            total: totalScore
+        };
+
+        // Eğer not varsa otomatik dağıt
+        if (totalScore > 0) {
+            distributeGradeToAllCriteria(newStudent);
+        }
+
+        currentStudents.push(newStudent);
     });
 
     // Not tablosunu oluştur

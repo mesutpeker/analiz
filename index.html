@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,11 +23,14 @@
             body * {
                 visibility: hidden;
             }
-            #print-area, #print-area * {
+
+            #print-area,
+            #print-area * {
                 visibility: visible;
                 color: black !important;
                 background-color: white !important;
             }
+
             #print-area {
                 position: absolute;
                 left: 0;
@@ -36,15 +40,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid mt-3">
         <div class="row">
             <div class="col-md-12">
                 <div class="card main-card">
                     <div class="card-header bg-primary text-white">
-                        <h2 class="text-center mb-0"><i class="bi bi-mortarboard-fill me-2"></i>Öğrenci Not Analiz Uygulaması</h2>
+                        <h2 class="text-center mb-0"><i class="bi bi-mortarboard-fill me-2"></i>Öğrenci Not Analiz
+                            Uygulaması</h2>
                     </div>
-                    
+
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-12">
@@ -56,25 +62,29 @@
                                         <div class="row g-2">
                                             <div class="col-md-6 col-lg-3">
                                                 <div class="form-floating mb-2">
-                                                    <input type="text" class="form-control" id="school-name" placeholder="Okul Adı">
+                                                    <input type="text" class="form-control" id="school-name"
+                                                        placeholder="Okul Adı">
                                                     <label for="school-name">Okul Adı</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-lg-3">
                                                 <div class="form-floating mb-2">
-                                                    <input type="text" class="form-control" id="course-name" placeholder="Ders Adı">
+                                                    <input type="text" class="form-control" id="course-name"
+                                                        placeholder="Ders Adı">
                                                     <label for="course-name">Ders Adı</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-lg-3">
                                                 <div class="form-floating mb-2">
-                                                    <input type="text" class="form-control" id="exam-period" placeholder="Sınav Dönemi">
+                                                    <input type="text" class="form-control" id="exam-period"
+                                                        placeholder="Sınav Dönemi">
                                                     <label for="exam-period">Sınav Dönemi</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-lg-3">
                                                 <div class="form-floating mb-2">
-                                                    <input type="text" class="form-control" id="teacher-name" placeholder="Öğretmen Adı">
+                                                    <input type="text" class="form-control" id="teacher-name"
+                                                        placeholder="Öğretmen Adı">
                                                     <label for="teacher-name">Öğretmen Adı</label>
                                                 </div>
                                             </div>
@@ -82,22 +92,30 @@
                                     </div>
                                 </div>
                                 <div class="action-buttons text-center animate-fade-in">
-                                    <button id="load-pdf-btn" class="btn btn-primary btn-lg m-2 btn-shine" data-bs-toggle="modal" data-bs-target="#pdfModal">
+                                    <button id="load-pdf-btn" class="btn btn-primary btn-lg m-2 btn-shine"
+                                        data-bs-toggle="modal" data-bs-target="#pdfModal">
                                         <i class="bi bi-file-earmark-pdf me-2"></i>PDF'den Yükle
                                     </button>
-                                    <button id="add-class-btn" class="btn btn-success btn-lg m-2 btn-shine" data-bs-toggle="modal" data-bs-target="#classModal">
+                                    <button id="text-import-btn" class="btn btn-secondary btn-lg m-2 btn-shine"
+                                        data-bs-toggle="modal" data-bs-target="#textImportModal">
+                                        <i class="bi bi-clipboard-data me-2"></i>E-Okuldan Kopyala
+                                    </button>
+                                    <button id="add-class-btn" class="btn btn-success btn-lg m-2 btn-shine"
+                                        data-bs-toggle="modal" data-bs-target="#classModal">
                                         <i class="bi bi-people-fill me-2"></i>Sınıf Ekle
                                     </button>
-                                    <button id="add-student-btn" class="btn btn-info btn-lg m-2 btn-shine" data-bs-toggle="modal" data-bs-target="#studentModal">
+                                    <button id="add-student-btn" class="btn btn-info btn-lg m-2 btn-shine"
+                                        data-bs-toggle="modal" data-bs-target="#studentModal">
                                         <i class="bi bi-person-plus-fill me-2"></i>Öğrenci Ekle
                                     </button>
-                                    <button id="analyze-btn" class="btn btn-warning btn-lg m-2 btn-shine" data-bs-toggle="modal" data-bs-target="#analysisModal">
+                                    <button id="analyze-btn" class="btn btn-warning btn-lg m-2 btn-shine"
+                                        data-bs-toggle="modal" data-bs-target="#analysisModal">
                                         <i class="bi bi-graph-up me-2"></i>Analiz Et
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div id="results-container" class="card mb-4 d-none shadow-hover">
                             <div class="card-header bg-success text-white">
                                 <h4><i class="bi bi-list-check me-2"></i>Öğrenci Listesi</h4>
@@ -106,12 +124,14 @@
                                 <div id="students-list"></div>
                             </div>
                         </div>
-                        
+
                         <div id="grading-container" class="card mb-4 shadow-hover animate-slide-up">
-                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                            <div
+                                class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                                 <h4><i class="bi bi-clipboard-data me-2"></i>Not Dağılımı</h4>
                                 <div class="grade-actions">
-                                    <button id="edit-criteria-btn" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#criteriaModal">
+                                    <button id="edit-criteria-btn" class="btn btn-light" data-bs-toggle="modal"
+                                        data-bs-target="#criteriaModal">
                                         <i class="bi bi-pencil-square me-1"></i>Soru İsimlerini Düzenle
                                     </button>
                                 </div>
@@ -119,10 +139,11 @@
                             <div class="card-body">
                                 <div class="row mb-3">
                                     <div class="col-md-12">
-                                        <small class="text-muted">Her öğrencinin toplam notunu girin, not 5 ve katları olarak 10 soruya otomatik dağıtılacaktır.</small>
+                                        <small class="text-muted">Her öğrencinin toplam notunu girin, not 5 ve katları
+                                            olarak 10 soruya otomatik dağıtılacaktır.</small>
                                     </div>
                                 </div>
-                                
+
                                 <div class="table-responsive glass">
                                     <table class="table table-bordered table-hover" id="grade-table">
                                         <thead class="table-light">
@@ -147,8 +168,10 @@
                                             <!-- Öğrenci verileri JavaScript ile doldurulacak -->
                                             <tr class="empty-table-message">
                                                 <td colspan="14" class="text-center py-4">
-                                                    <i class="bi bi-exclamation-circle text-muted fs-1 d-block mb-2 animate-pulse"></i>
-                                                    <span class="text-muted">Henüz öğrenci eklenmemiş. PDF'den yükleyin veya manuel olarak ekleyin.</span>
+                                                    <i
+                                                        class="bi bi-exclamation-circle text-muted fs-1 d-block mb-2 animate-pulse"></i>
+                                                    <span class="text-muted">Henüz öğrenci eklenmemiş. PDF'den yükleyin
+                                                        veya manuel olarak ekleyin.</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -161,18 +184,20 @@
             </div>
         </div>
     </div>
-    
+
     <!-- PDF Yükleme Modal -->
     <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered custom-modal pdf-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="pdfModalLabel"><i class="bi bi-file-earmark-pdf"></i>PDF'den Öğrenci Yükle</h5>
+                    <h5 class="modal-title" id="pdfModalLabel"><i class="bi bi-file-earmark-pdf"></i>PDF'den Öğrenci
+                        Yükle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-info mb-3">
-                        <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>E-Okul'dan PDF İndirme Adımları:</h6>
+                        <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>E-Okul'dan PDF İndirme Adımları:
+                        </h6>
                         <ol class="mb-0 ps-3">
                             <li>https://e-okul.meb.gov.tr adresinden giriş yapın.</li>
                             <li>Sol Menüden "Öğrenci İşlemleri"ne gidin.</li>
@@ -194,7 +219,8 @@
                             <span>PDF işleniyor, lütfen bekleyin...</span>
                         </div>
                         <div class="progress mt-2">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
@@ -205,7 +231,41 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- Metin İçe Aktarma Modal -->
+    <div class="modal fade" id="textImportModal" tabindex="-1" aria-labelledby="textImportModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg custom-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="textImportModalLabel"><i class="bi bi-clipboard-data"></i>E-Okuldan
+                        Kopyala</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle me-2"></i>e-Okul ders notu girişi kısmındaki listeyi kopyalayıp
+                        buraya yapıştırın.
+                    </div>
+                    <div class="mb-3">
+                        <label for="import-class-name" class="form-label">Sınıf Adı</label>
+                        <input type="text" class="form-control" id="import-class-name"
+                            placeholder="Örn: 10-A Matematik">
+                    </div>
+                    <div class="mb-3">
+                        <label for="import-text" class="form-label">Metin Yapıştır</label>
+                        <textarea class="form-control" id="import-text" rows="10"
+                            placeholder="Listeyi buraya yapıştırın..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="process-text-btn">Verileri İşle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Sınıf Ekleme Modal -->
     <div class="modal fade" id="classModal" tabindex="-1" aria-labelledby="classModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered custom-modal class-modal">
@@ -227,13 +287,14 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Öğrenci Ekleme Modal -->
     <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered custom-modal student-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="studentModalLabel"><i class="bi bi-person-plus-fill"></i>Öğrenci Ekle</h5>
+                    <h5 class="modal-title" id="studentModalLabel"><i class="bi bi-person-plus-fill"></i>Öğrenci Ekle
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body">
@@ -263,13 +324,14 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Kriter İsimleri Düzenleme Modal -->
     <div class="modal fade" id="criteriaModal" tabindex="-1" aria-labelledby="criteriaModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable custom-modal criteria-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="criteriaModalLabel"><i class="bi bi-pencil-square"></i>Soru İsimlerini Düzenle</h5>
+                    <h5 class="modal-title" id="criteriaModalLabel"><i class="bi bi-pencil-square"></i>Soru İsimlerini
+                        Düzenle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body">
@@ -307,7 +369,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="criteria-6" class="form-label">Kriter 6</label>
-                                <input type="text" class="form-control" id="criteria-6" placeholder="Örn: Grup Çalışması">
+                                <input type="text" class="form-control" id="criteria-6"
+                                    placeholder="Örn: Grup Çalışması">
                             </div>
                             <div class="mb-3">
                                 <label for="criteria-7" class="form-label">Kriter 7</label>
@@ -335,7 +398,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Analiz Modal -->
     <div class="modal fade" id="analysisModal" tabindex="-1" aria-labelledby="analysisModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -356,13 +419,15 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Öğrenci Düzenleme Modal -->
-    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered custom-modal student-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editStudentModalLabel"><i class="bi bi-pencil-square"></i>Öğrenci Düzenle</h5>
+                    <h5 class="modal-title" id="editStudentModalLabel"><i class="bi bi-pencil-square"></i>Öğrenci
+                        Düzenle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body">
@@ -388,12 +453,15 @@
     </div>
 
     <!-- Öğrenci Silme Onay Modal -->
-    <div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteStudentModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteStudentModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Öğrenci Sil</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                    <h5 class="modal-title" id="deleteStudentModalLabel"><i
+                            class="bi bi-exclamation-triangle-fill me-2"></i>Öğrenci Sil</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body">
                     <p>Seçilen öğrenciyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
@@ -406,7 +474,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Yazdırma için gizli div -->
     <div id="print-area" class="d-none">
         <div class="print-header">
@@ -420,7 +488,7 @@
             <div class="print-teacher-signature"></div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="pdf-processing.js"></script>
@@ -428,4 +496,5 @@
     <script src="enhanced-print.js"></script>
     <script src="modal-fix.js"></script>
 </body>
+
 </html>
